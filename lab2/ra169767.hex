@@ -1,0 +1,61 @@
+000		09 105	0B 106
+#O valor salvo designa o numero que encontraremos a raiz.
+001		0A 000	21 107
+
+#Realiza a primeira aproximacao da raiz
+002		01 107	0C 108
+003		0A 000	21 109
+
+#Realiza mais dez aproximacoes, cada bloco designa 2 aproximacoes
+004		01 107	0C 109
+005		0A 000	05 109
+006		0C 108	0A 000
+007		21 109	01 107
+008		0C 109	0A 000
+009		05 109	0C 108
+00A		0A 000	21 109
+
+#Duas aproximacoes feitas
+00B		01 107	0C 109
+00C		0A 000	05 109
+00D		0C 108	0A 000
+00E		21 109	01 107
+00F		0C 109	0A 000
+010		05 109	0C 108
+011		0A 000	21 109
+
+#Quatro aproximacoes feitas
+012		01 107	0C 109
+013		0A 000	05 109
+014		0C 108 	0A 000
+015		21 109	01 107
+016		0C 109	0A 000
+017		05 109	0C 108
+018		0A 000	21 109
+
+#Seis aproximacoes feitas
+019		01 107	0C 109
+01A		0A 000	05 109
+01B		0C 108	0A 000
+01C		21 109	01 107
+01D		0C 109	0A 000
+01E		05 109	0C 108
+01F		0A 000	21 109
+
+#Oito aproximacoes feitas
+020		01 107	0C 109
+021		0A 000	05 109
+022		0C 108	0A 000
+023		21 109	01 107
+024		0C 109	0A 000
+025		05 109	0C 108
+026		0A 000	21 109
+#Dez aproximacoes feitas.
+
+027		0D 400 	00 000
+
+105		00 000	00 DAC
+106		00 000	00 00A
+107		00 000	00 000
+108		00 000	00 002
+109		00 000	00 000

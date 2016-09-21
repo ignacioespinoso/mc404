@@ -1,0 +1,28 @@
+000 01 3FF 06 3FC #decrementa o tamanho do vetor
+001 21 3FF 10 002 #pula pro comeco das instrucoes caso o tamanho do vetor seja >= 0
+002 0D 00D 01 3FD #sai do loop caso caso nao seja positivo o caso anterior
+
+#Multiplicando as duas posicoes dos vetores
+003 12 004 0D 004 #Atualiza o endereco da posicao do vetor 1 para a multiplicao
+004 09 3FD 01 3FE
+005 12 006 0D 006 #Atualiza o endereco da posicao do vetor 2 para a multiplicao
+006 0B 3FD 0A 000 
+
+
+007 05 3FB 21 3FB  #Soma o resultado atual aos passados e salva
+
+#Atualiza as posicoes dos vetores
+008 01 3FC 05 3FD
+009 21 3FD 01 3FC
+00a 05 3FE 21 3FE
+
+#Atualiza o tamanho do vetor
+00b 01 3FF 06 3FC 
+00c 21 3FF 0E 001 #Fecha o loop indo para o pulo inicial
+00d 01 3FB 0D 400 #Salva o produto no registrador AC e fecha o programa
+
+3fb 00 000 00 000 #Armazena o produto
+3fc 00 000 00 001 #Constante 1
+3fd 00 000 00 211 #Numero com endereco vetor1
+3fe 00 000 00 222 #Numero com endereco vetor2
+3ff 00 000 00 003 #Tamanho dos vetores

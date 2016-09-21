@@ -1,0 +1,64 @@
+LOAD MQ             00001010    0A
+LOAD MQ,M(X)        00001001    09
+STOR M(X)           00100001    21
+LOAD M(X)           00000001    01
+JUMP M(X,0:19)      00001101    0D
+ADD M(X)            00000101    05
+MUL M(X)            00001011    0B
+DIV M(X)            00001100    0C
+
+.org 0x105      #Rótulo para a distancia desejada
+    105
+.org 0x106      #Rótulo para a gravidade
+    106
+.org 0x107     #Rotulo para xg que equivale ao y da formula dada
+    107
+.org 0x108  #rotulo para a constante 2
+    var_two
+.org 0x109   #Rotulo para k
+    109
+
+1 LOAD MQ,M(105)                                                        09 105-
+MUL M(106)                                                              0B 106-
+2 LOAD MQ                                                               0A 000-
+STOR M(107)   #Este endereco designa o numero que encontraremos a raiz  21 107-
+
+#subtrai 1 do endereco 105 e salva em ac
+
+jump condicional 
+
+
+vem pra ca
+3 LOAD M(107)   #Realiza a primeira aproximacao da raiz                 01 107-
+DIV M(var_two)                                                          0C 108-
+4 LOAD MQ                                                               0A 000-
+STOR M(109)                                                             21 109-
+
+#Realiza mais dez aproximacoes
+5 LOAD(107)   #Encontra y/k...                                          01 107-
+ DIV M(109)                                                             0C 109-
+6 LOAD MQ                                                               0A 000-
+ ADD M(109)    #Soma o resultado com k...                               05 109 -
+8 DIV M(108)  #...E divide tudo por dois.                               0C 108-
+ LOAD MQ                                                                0A 000-
+9 STOR M(109)   #Salva a proximacao na variavel k                       21 109
+
+#...
+
+
+01 107
+0C 109
+0A 000
+05 109
+0C 108
+0A 000
+21 109
+01 109
+0C 108
+0A 000
+05 109
+0C 108
+0A 000
+21 109
+
+JUMP(0x400)  0D 400

@@ -1,0 +1,32 @@
+0 LOAD M(3FF)
+ #decrementa o valor inicial
+ SUB M(3FC)
+ STOR M(3FF)
+1 JUMP+ M(3, 0:19)  #pula pro comeco das instrucoes caso o tamanho do vetor seja >=0
+2 JUMP M(F) #sai do loop caso caso nao seja positivo o caso anterior
+3 LOAD 3FD
+4
+5
+6
+7
+8
+9
+A
+B LOAD M(3FF)
+C SUB M(3FC)
+D STOR M(3FF)
+E JUMP M(0) #fecha loop pulando pro pulo condicional
+F
+
+3FB #armazena o produto
+3FC #constante 1
+3FD #numero com endereco vetor1
+3FE #numero com endereco vetor2
+3FF #tamanho do vetor
+
+#multiplicando as duas posicoes de vetores
+LOAD 3FD
+STOR M(X,8:19) #onde x eh o endereco da proxima instrucao
+LOAD MQ,M(3FD)
+LOAD 3FE
+MUL M(X)
