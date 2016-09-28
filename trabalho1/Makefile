@@ -1,7 +1,7 @@
 ias-as.x: main.o label_interpreter.o directive_interpreter.o
 	@echo "Ligando todos os códigos objeto..."
 	ld -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib64/crt1.o /usr/lib64/crti.o -L/usr/lib64 main.o label_interpreter.o directive_interpreter.o -lc /usr/lib64/crtn.o -o ias-as.x
-
+	@echo "Sucesso!"
 main.s: main.c
 	@echo "Criando main em linguagem de montagem..."
 	gcc -S main.c -o main.s
