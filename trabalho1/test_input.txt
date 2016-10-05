@@ -1,4 +1,6 @@
-Este eh um arquivo de teste.
-Essa linha deve ser impressa.
-Essa tambem.
-EH TOIS.
+rotulo:
+rotulo1:
+rotulo2:hue
+rotulo3:    s
+rotulo4:    s
+4rotulo:
