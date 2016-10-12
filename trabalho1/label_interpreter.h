@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include <ctype.h>
 
 char* label_verifier(char *line, int line_counter);
 #endif /*LABEL_INTERPRETER_DEFINED*/

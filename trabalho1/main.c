@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 		//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.
 		if(file) {
 			int line_counter = 0;
-
+			
 			//Le o arquivo linha por linha
 			while(fgets(line, (MAX_SIZE-1) * sizeof(char), file)) {
 				printf("%s", line);
