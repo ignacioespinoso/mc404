@@ -43,3 +43,15 @@ char* label_verifier(char *line, int line_counter) {
 		return NULL;
 	}
 }
+
+void add_label(char *name, int address, Label_list start) {
+	Label_list new_label = malloc(sizeof(Label));
+	while(strcmp(name, start->name) != 0) {
+		start = start->next;
+	}
+}
+
+void new_label_list(Label_list start) {
+	
+	start = new Label_list
+}
