@@ -2,6 +2,8 @@
 #define LABEL_INTERPRETER_DEFINED
 
 #define MAX_SIZE 4097
+#define MAX_MAP_SIZE 1024
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
