@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 		char line[MAX_SIZE];
 
 		if(file) {
-			int line_counter = 0, address = 0, right = -1;
+			int line_counter = 1, address = 0, right = -1;
 			// bool dont_print = false;
 			//Inicializa a lista ligada de rotulos.
 			Label_list head_node;
@@ -22,10 +22,10 @@ int main(int argc, char *argv[]) {
 
 			//Le o arquivo linha por linha
 			while(fgets(line, (MAX_SIZE-1) * sizeof(char), file)) {
+				char *string_end = line;
 				printf("%s", line);
 
 				//Identifica se a linha possui um rotulo valido e cria um novo caso haja.
-				char *string_end = line;
 				int has_label = label_verifier(line, head_node, &string_end);
 
 				if(has_label == 1) {
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 				}
 
 				//Identifica se a linha possui uma diretiva
-
+			//	int has_directive = directive_verifier(string_start, &string_end);
 				//Identifica se a linha possui uma instrucao
 
 				//Identifica se a linha possui um comentario

@@ -7,7 +7,7 @@ int label_verifier(char *line, Label_list head_node, char **string_end) {
 	char *string_start = line;
 
 	int j = 0;
-	for(j = 0; (j < (MAX_SIZE-1)) && (line[j]!= ':'); j++);
+	for(j = 0; (j < (MAX_SIZE-1)) && (line[j] != ':') && (line[j] != '\n'); j++);
 
 	//Apos a verificacao de atribuicao impropria de rotulos...
 	if(line[j]== ':') {
