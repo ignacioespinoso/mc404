@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
 		if(file) {
 			int line_counter = 1, address = 0, right = -1;
-			// bool dont_print = false;
+			bool dont_print = false;
 			//Inicializa a lista ligada de rotulos.
 			Label_list head_node;
 			new_label_list(&head_node);
@@ -39,20 +39,49 @@ int main(int argc, char *argv[]) {
 					printf("----------Tem rotulo na linha %d!!\n", line_counter);
 				//Atua caso haja um rotulo invalido.
 				} else if(has_label == -1){
-					// dont_print = true;
+					dont_print = true;
 					printf("ERROR on line %d\nmensagem!\n", line_counter);
 				}
 
 				//Identifica se a linha possui uma diretiva
-			//	int has_directive = directive_verifier(string_start, &string_end);
+				char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
+				int has_directive = directive_verifier(&string_end, &directive_parameter);
+
+				//Atua para a diretiva .org
+				if(has_directive == 1) {
+					apply_org(&address, directive_parameter);
+
+				//Atua para a diretiva .word
+				} else if(has_directive == 2) {
+					apply_word(&address, directive_parameter, &memory_map);
+
+				//Atua para a diretiva .align
+				} else if(has_directive == 3) {
+					apply_align(&address, directive_parameter);
+
+				//Atua para a diretiva .wfill
+				} else if(has_directive == 4) {
+					apply_wfill(&address, &memory_map, directive_parameter);
+
+				//Atua para a diretiva .set
+				} else if(has_directive == 5) {
+					apply_set(&aliases, directive_parameter);
+
+				//Atua para uma diretiva invalida.
+				} else if(has_directive == -1) {
+					dont_print = true;
+					printf("ERROR on line %d\nmensagem!\n", line_counter);
+				}
 				//Identifica se a linha possui uma instrucao
 
 				//Identifica se a linha possui um comentario
 
 				line_counter++;
-
 			}
 			print_labels(head_node);
+			if(dont_print) {
+				printf("Nao vai imprimir mapa!\n");
+			}
 			//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.
 			fclose(file);
 		}
