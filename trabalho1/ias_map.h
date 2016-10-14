@@ -9,14 +9,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void new_memory_map (int **map);
+//Cria um novo mapa de memoria do ias.
+//Cada linha designa uma palavra de memoria
+//A coluna 0 designa o endereco, as colunas 1 e 3 designam opcodes e as 2 e 4 enderecos das operacoes.
+int** new_memory_map (int map_size);
 
-void print_map (int **map, int *to_be_printed);
-
+//Desaloca a memoria designada para o mapa de memoria
 void free_memory_map(int **map);
 
-void print_map (int **map, bool *be_printed, int MAX_MAP_SIZE);
+//Imprime as palavras de memoria desejadas
+void print_map (int **map, bool *be_printed, int map_size);
 
+//Escreve um valor na memoria de acordo com os argumentos. Para right = 0
+// , faz uso de todos os argumentos. Retorna 0 para endereco invalido.
 int write_data(int **map, int address, int right, int opcode1, int opcode2
 				, int op_address1, int op_address2, bool *be_printed);
 

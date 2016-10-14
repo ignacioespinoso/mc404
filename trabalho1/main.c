@@ -4,7 +4,8 @@
 #include <stdbool.h>
 
 #include "label_interpreter.h"
-
+#include "ias_map.h"
+#include "directive_interpreter.h"
 #define MAX_SIZE 4097
 
 int main(int argc, char *argv[]) {
@@ -15,8 +16,8 @@ int main(int argc, char *argv[]) {
 
 		if(file) {
 			int line_counter = 1, address = 0, right = -1;
-			int **memory_map
-			bool *be_printed;
+			int **memory_map = new_memory_map(MAX_MAP_SIZE);
+			bool *be_printed = calloc(MAX_MAP_SIZE, sizeof(bool));
 			bool dont_print = false;
 
 			//Inicializa a lista ligada de rotulos.
@@ -24,13 +25,12 @@ int main(int argc, char *argv[]) {
 			new_label_list(&head_node);
 
 			//Inicializa o mapa de memoria e seus enderecos a serem impressos.
-			new_memory_map(memory_map);
+
 
 
 			//Le o arquivo linha por linha
 			while(fgets(line, (MAX_SIZE-1) * sizeof(char), file)) {
 				char *string_end = line;
-				printf("%s", line);
 
 				//Identifica se a linha possui um rotulo valido e cria um novo caso haja.
 				int has_label = label_verifier(line, head_node, &string_end);
@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 						label_name[i] = *probe;
 					}
 					add_label(label_name, address, right, head_node);
-					printf("----------Tem rotulo na linha %d!!\n", line_counter);
 				//Atua caso haja um rotulo invalido.
 				} else if(has_label == -1){
 					dont_print = true;
@@ -51,9 +50,14 @@ int main(int argc, char *argv[]) {
 				}
 
 				//Identifica se a linha possui uma diretiva
-				// if(!dont_print) {
-					// char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-					// int has_directive = directive_verifier(&string_end, &directive_parameter);
+				if(!dont_print) {
+					char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
+					int has_directive = directive_verifier(&string_end, &directive_parameter);
+					if(has_directive) {
+						printf("Diretiva na linha %d\n", line_counter);
+					} else {
+						printf("Sem diretiva na linha %d\n", line_counter);
+					}
 					//
 					// //Atua para a diretiva .org
 					// if(has_directive == 1) {
@@ -86,14 +90,15 @@ int main(int argc, char *argv[]) {
 					// 	dont_print = true;
 					// 	printf("ERROR on line %d\nmensagem!\n", line_counter);
 					// }
-				// }
+				}
 					//Identifica se a linha possui uma instrucao
 
 					//Identifica se a linha possui um comentario
-				
+
 				line_counter++;
 			}
 			print_labels(head_node);
+			print_map(memory_map, be_printed, MAX_MAP_SIZE);
 			if(dont_print) {
 				printf("Nao vai imprimir mapa!\n");
 			}

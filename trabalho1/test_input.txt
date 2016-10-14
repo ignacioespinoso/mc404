@@ -1,10 +1,9 @@
-rotulo:
-
-
-rotulo1:
-
+.set
+.org
+.xablau
+rotulo: .xablau
+rotulo1:                 .xablau
 rotulo2:hue
-
-rotulo3:    s
+rotulo3:    s.xablau
 rotulo4:    s
 4rotulo:

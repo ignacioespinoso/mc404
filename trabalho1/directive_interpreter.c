@@ -1,63 +1,88 @@
 #include "directive_interpreter.h"
 
 int directive_verifier(char **string_end, char **directive_parameter) {
-	char *string_start = *(*string_end);
+	char *string_start = (*string_end);
+	bool has_directive = false;
 
 	// Percorre a linha procurando por uma diretiva.
-	// Caso o primeiro caractere diferente de ' ' seja '.', ha diretiva.
-	while((*string_start) == ' ') {
+	while(((*string_start) == ' ') && ((*string_start) != '\n') && ((*string_start) != '\0')) {
 		string_start++;
 	}
-	if(string_start != ' ')
+	// Caso o primeiro caractere diferente de ' ' seja '.', ha diretiva.
+	if(*string_start == '.') {
+		has_directive = true;
+	}
+	printf("String start = %c", *string_start);
+	//Verifica se a diretiva eh valida
+	if(has_directive) {
 
+		// Encontra o final do nome da diretiva
+		for((*string_end) = string_start;
+				((**string_end) != ' ') && ((**string_end) != '\n') && ((**string_end) != '\0');
+				 (*string_end)++);
 
-	bool has_directive = false, directive_error = false;
-
-	int j = 0;
-	for(j = 0; (j < (MAX_SIZE-1)) && (line[j] != ':') && (line[j] != '\n'); j++);
-
-	//Apos a verificacao de atribuicao impropria de rotulos...
-	if(line[j]== ':') {
-		(*string_end) = line + j;
-		has_label = true;
-
-		//Caso algum caractere nao seja alfanumerico ou underscore, ha erro da label.
-		char *verifier = string_start;
-		while(verifier != (*string_end)) {
-			if(!isalnum(*verifier) && (*verifier != '_')) {
-				label_error = true;
-			}
-			verifier++;
+		//Cria uma string 'name' que armazena o nome da diretiva.
+		char *name = malloc(MAX_SIZE + 1 * sizeof(char));
+		int i = 0;
+		for(char *probe = string_start ; probe != *string_end; probe++) {
+			name[i] = **string_end;
+			i++;
 		}
+		name[i] = '\0';
 
-		//Verifica se o primeiro caractere eh um numero.
-		if(isdigit(*string_start)) {
-			label_error = true;
-		}
-
-		//Verifica se logo apos os dois pontos (":") ha algum caractere.
-		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
-			label_error = true;
-		}
+		return 1;
+	} else {
+		return 0;
 	}
 }
 
-bool is_org(char *name);
+bool is_org(char *name) {
+	if(strcmp(name, "org") == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-bool is_word(char *name);
+bool is_word(char *name) {
+	if(strcmp(name, "word") == 0) {
+		return true;
+	} else {
+		return false;
+	}
 
-bool is_align(char *name);
+}
 
-bool is_wfill(char *name);
+bool is_align(char *name) {
+	if(strcmp(name, "align") == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-bool is_set(char *name);
+bool is_wfill(char *name) {
+	if(strcmp(name, "wfill") == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-void apply_org(int *address, char *directive_parameter);
+bool is_set(char *name) {
+	if(strcmp(name, "set") == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-void apply_word(int *address, char *directive_parameter, int **memory_map);
-
-void apply_align(int *address, char *directive_parameter);
-
-void apply_wfill(int *address, int **memory_map, char *directive_parameter);
-
-void apply_set(&aliases, char *directive_parameter);
+// void apply_org(int *address, char *directive_parameter);
+//
+// void apply_word(int *address, char *directive_parameter, int **memory_map);
+//
+// void apply_align(int *address, char *directive_parameter);
+//
+// void apply_wfill(int *address, int **memory_map, char *directive_parameter);
+//
+// void apply_set(&aliases, char *directive_parameter);

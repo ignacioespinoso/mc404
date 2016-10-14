@@ -3,11 +3,13 @@
 //Cria um novo mapa de memoria do ias.
 //Cada linha designa uma palavra de memoria
 //A coluna 0 designa o endereco, as colunas 1 e 3 designam opcodes e as 2 e 4 enderecos das operacoes.
-void new_memory_map (int **map) {
-	map = malloc(MAX_MAP_SIZE * sizeof(int *));
-	for(int i = 0; i < MAX_MAP_SIZE; i++) {
+int** new_memory_map (int map_size) {
+	int **map = malloc(map_size * sizeof(int *));
+	for(int i = 0; i < map_size; i++) {
 		map[i] = malloc(5 * sizeof(int));
 	}
+
+	return map;
 }
 
 //Desaloca a memoria designada para o mapa de memoria
@@ -19,7 +21,7 @@ void free_memory_map(int **map) {
 }
 
 //Imprime as palavras de memoria desejadas
-void print_map (int **map, bool *be_printed, int MAX_MAP_SIZE) {
+void print_map (int **map, bool *be_printed, int map_size) {
 	for(int i = 0;	i < MAX_MAP_SIZE; i++) {
 		//Caso o endereco atual foi escrito, eh impressa a palavra de memoria.
 		if(be_printed[i]) {
