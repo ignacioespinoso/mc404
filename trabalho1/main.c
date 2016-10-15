@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 #include "label_interpreter.h"
-#include "ias_map.h"
 #include "directive_interpreter.h"
-#define MAX_SIZE 4097
+#include "ias_map.h"
+
 
 int main(int argc, char *argv[]) {
 	//Obtem o nome do arquivo de entrada
@@ -19,8 +19,10 @@ int main(int argc, char *argv[]) {
 		bool dont_print = false;
 
 		//Inicializa a lista ligada de rotulos.
-		Label_list head_node;
-		new_label_list(&head_node);
+		Label_list label_head_node = new_label_list();
+
+		//Inicializa a lista ligada de simbolos.
+		Alias_list alias_head_node = new_alias_list();
 
 		//Inicializa o mapa de memoria e seus enderecos a serem impressos.
 		int **memory_map = new_memory_map(MAX_MAP_SIZE);
@@ -32,18 +34,12 @@ int main(int argc, char *argv[]) {
 
 ////////Identifica se a linha possui um rotulo valido e cria um novo caso haja.////////////
 			if(!dont_print) {
-				int has_label = label_verifier(line, head_node, &string_end);
+				char *label_name = malloc((MAX_LABEL_SIZE+1) * sizeof(char));
+				int has_label = label_verifier(line, &string_end, label_name
+																				, label_head_node, alias_head_node);
 
 				if(has_label == 1) {
-					//Descobre o nome do rotulo com base no resultado da verificacao
-					char *label_name = malloc(MAX_SIZE * sizeof(char));
-					char *probe = line;
-					int i;
-					for(i = 0; probe != string_end; probe++, i++) {
-						label_name[i] = *probe;
-					}
-						label_name[i] = '\0';
-					add_label(label_name, address, right, head_node);
+					add_label(label_name, address, right, label_head_node);
 					//Percorre os espacos apos o rotulo.
 					string_end++;
 					while(((*string_end) == ' ') && ((*string_end) != '\n') && ((*string_end) != '\0')) {
@@ -58,30 +54,47 @@ int main(int argc, char *argv[]) {
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
 					char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-					int has_directive = directive_verifier(string_end, directive_parameter);
+					int has_directive = directive_verifier(&string_end, directive_parameter);
 
-					//Atua para a diretiva .org
+//////////Atua para a diretiva .org
 					if(has_directive == 1) {
-
 						printf("Possui diretiva .org na linha %d\n", line_counter);
-						apply_org(&address, directive_parameter);
-					//Atua para a diretiva .word
+						if(apply_org(&address, directive_parameter)) {
+							right = -1;
+						} else {
+							dont_print = true;
+						}
+
+//////////Atua para a diretiva .word
 					} else if(has_directive == 2) {
-						// apply_word(&address, directive_parameter, &memory_map);
 						printf("Possui diretiva .word na linha %d\n", line_counter);
-				//Atua para a diretiva .align
+						// apply_word(&address, directive_parameter, &memory_map);
+
+
+//////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
-						// apply_align(&address, directive_parameter);
 						printf("Possui diretiva .align na linha %d\n", line_counter);
-					//Atua para a diretiva .wfill
+						address = 35;
+						if(apply_align(&address, directive_parameter)) {
+							right = -1;
+						} else {
+							dont_print = true;
+						}
+
+//////////Atua para a diretiva .wfill
 					} else if(has_directive == 4) {
 						// apply_wfill(&address, &memory_map, directive_parameter);
 						printf("Possui diretiva .wfill na linha %d\n", line_counter);
-					//Atua para a diretiva .set
+
+
+//////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
-						// apply_set(&aliases, directive_parameter);
 						printf("Possui diretiva .set na linha %d\n", line_counter);
-					//Atua para uma diretiva invalida.
+						if(!apply_set(alias_head_node, directive_parameter, &string_end, label_head_node)) {
+							dont_print = true;
+						}
+
+//////////Atua para uma diretiva invalida.
 					} else if(has_directive == -1) {
 						dont_print = true;
 						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
@@ -106,7 +119,8 @@ int main(int argc, char *argv[]) {
 			// }
 			line_counter++;
 		}
-		print_labels(head_node);
+		print_labels(label_head_node);
+		print_aliases(alias_head_node);
 		if(dont_print) {
 			printf("Nao vai imprimir mapa!\n");
 		} else {

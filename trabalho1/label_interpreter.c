@@ -2,13 +2,17 @@
 
 //Verifica se a string possui um rotulo valido.
 //Retorna 1 para rotulo valido, 0 para ausencia de rotulo e -1 para rotulo invalido
-int label_verifier(char *line, Label_list head_node, char **string_end) {
+int label_verifier(char *line, char **string_end, char *label_name
+										, Label_list head_node, Alias_list alias_head_node){
 	bool has_label = false, label_error = false;
 	char *string_start = line;
 
 	int j = 0;
 	for(j = 0; (j < (MAX_SIZE-1)) && (line[j] != ':') && (line[j] != '\n'); j++);
 
+	while(((*string_start == ' ') || (*string_start == '\t')) && (*string_start != '\n')) {
+		string_start++;
+	}
 	//Apos a verificacao de atribuicao impropria de rotulos...
 	if(line[j]== ':') {
 		(*string_end) = line + j;
@@ -29,25 +33,32 @@ int label_verifier(char *line, Label_list head_node, char **string_end) {
 		}
 
 		//Verifica se logo apos os dois pontos (":") ha algum caractere.
-		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
+		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\n') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
 			label_error = true;
 		}
 	}
 	// Verifica se ha um rotulo com mesmo nome na lista.
 	if(has_label) {
-		char *label_name = malloc(MAX_SIZE * sizeof(char));
-		char *probe = line;
-		for(int i = 0; probe != (*string_end); probe++, i++) {
+		//Em posse dos ponteiros iniciais e finais, label_name que armazena o nome do rotulo
+		char *probe = string_start;
+		int i;
+		for(i = 0; (probe != (*string_end)) && (i < MAX_LABEL_SIZE); probe++, i++) {
 			label_name[i] = *probe;
 		}
-
-
-		while((head_node->next != NULL) && (strcmp(label_name, head_node->name) < 0)) {
-			head_node = head_node->next;
+		label_name[i] = '\0';
+		Label *label_probe = head_node->next;
+		while(label_probe && (strcmp(label_name, label_probe->name) < 0)) {
+			label_probe = label_probe->next;
 		}
-
-		if(strcmp(label_name, head_node->name) == 0) {
+		//Verifica se ha rotulo com mesmo nome ou se o nome do rotulo ultrapassou o limite
+		if(label_probe && ((strcmp(label_name, label_probe->name) == 0) || (strlen(label_name) > MAX_LABEL_SIZE))) {
 			label_error = true;
+		}
+		//Verifica se ha um simbolo com mesmo nome na lista
+		for(Alias *alias_probe = alias_head_node->next; alias_probe && !label_error; alias_probe = alias_probe->next) {
+			if(strcmp(alias_probe->name, label_name) == 0) {
+				label_error = true;
+			}
 		}
 	}
 
@@ -58,56 +69,5 @@ int label_verifier(char *line, Label_list head_node, char **string_end) {
 		return -1;
 	} else {
 		return 0;
-	}
-}
-
-//Adiciona um novo rotulo na lista ligada.
-void add_label(char *name, int address, int right, Label_list head_node) {
-	Label_list verifier = head_node;
-	//Percorre a lista para a insercao de um no mantendo a ordem alfabetica
-	while((strcmp(name, verifier->name) < 0) && (verifier->next != NULL)) {
-		verifier = verifier->next;
-	}
-	//Caso nao tenha percorrido ate o final da lista, adiciona o rotulo entre dois
-	//nos.
-	if((verifier->next != NULL) || (verifier == head_node)) {
-		//Cria um novo no.
-		Label_list new_label = malloc(sizeof(Label));
-		new_label->name = name;
-		new_label->address = address;
-		new_label->right = right;
-		//O campo 'proximo' do novo no aponta para aonde o no anterior aponta.
-		new_label->next = verifier->next;
-		//O campo 'proximo' do no anterior aponta para o novo no.
-		verifier->next = new_label;
-
-	//Caso contrario, eh adicionado no final da lista
-	} else {
-		//Cria um novo no.
-		Label_list new_label = malloc(sizeof(Label));
-		new_label->name = name;
-		new_label->address = address;
-		new_label->right = right;
-		new_label->next = NULL;
-		//O campo 'proximo' do no anterior aponta para o novo no.
-		verifier->next = new_label;
-	}
-}
-
-//Cria uma nova lista ligada de rotulos.
-void new_label_list(Label_list *head_node) {
-	(*head_node) = malloc(sizeof(Label));
-	(*head_node)->name = "nameless";
-	(*head_node)->address = -1;
-	(*head_node)->right = 0;
-	(*head_node)->next = NULL;
-}
-
-//Imprime todos os rotulos existentes
-void print_labels(Label_list head_node) {
-	Label_list probe = head_node->next;
-	while(probe) {
-		printf("Label name: %s, Address: %d, Right: %d\n", probe->name, probe->address, probe->right);
-		probe = probe->next;
 	}
 }

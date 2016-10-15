@@ -1,6 +1,6 @@
-
-rotulo:    .org 0x41
-rotulo1:                 .word 0x4138F
+  rotulo8000:
+rotulo:    .set rotulo8000 31
+rotulo1:                 .set amomuitotudoisso 32
 rotulo2:hue
 .set
 .org

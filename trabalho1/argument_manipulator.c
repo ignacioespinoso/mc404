@@ -4,6 +4,8 @@
 int find_base(char *string_start) {
 	//Caso seja uma base hexadecimal, verifica se a mesma eh valida.
 	if((*string_start == '0') && (*(string_start+1) == 'x')) {
+		//Avanca os caracteres 0 e x
+		string_start += 2;
 		while(((*string_start) != ' ') && (*string_start) != '\0') {
 			//Retorna -1 caso seja um numero hexadecimal invalido.
 			if(!isxdigit(*string_start)) {
