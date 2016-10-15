@@ -1,9 +1,10 @@
+
+.wfill 53 rotulo:    
+rotulo1:                 .word 0x4138F
+rotulo2:hue
 .set
 .org
 .xablau
-rotulo: .wfill
-rotulo1:                 .word
-rotulo2:hue
 rotulo3:    s.xablau
 rotulo4:    s
 4rotulo:

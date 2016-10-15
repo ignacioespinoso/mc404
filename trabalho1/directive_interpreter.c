@@ -1,8 +1,8 @@
 #include "directive_interpreter.h"
 
 ///////////Verifica se existe diretiva e argumentos da mesma validos////////////
-int directive_verifier(char **string_end, char **directive_parameter) {
-	char *string_start = (*string_end);
+int directive_verifier(char *string_end, char *directive_parameter) {
+	char *string_start = string_end;
 	bool has_directive = false;
 
 	// Percorre a linha procurando por uma diretiva.
@@ -19,19 +19,17 @@ int directive_verifier(char **string_end, char **directive_parameter) {
 		string_start++;
 
 		// Encontra o final do nome da diretiva
-		for((*string_end) = string_start;
-				((**string_end) != ' ') && ((**string_end) != '\n') && ((**string_end) != '\0');
-				 (*string_end)++);
-
+		for(string_end = string_start;
+				((*string_end) != ' ') && ((*string_end) != '\n') && ((*string_end) != '\0');
+				 string_end++);
 		//Cria uma string 'name' que armazena o nome da diretiva.
 		char *name = malloc(MAX_SIZE + 1 * sizeof(char));
 		int i = 0;
-		for(char *probe = string_start ; probe != *string_end; probe++, i++) {
+		for(char *probe = string_start ; probe != string_end; probe++, i++) {
 			name[i] = *probe;
 		}
 		name[i] = '\0';
-
-		//Verifica se o nome da diretiva eh valido. Nao verifica se os argumentos sao validos.
+		//Verifica se o nome da diretiva eh valido. Nao verifica se os parametros sao validos.
 		//Caso seja uma diretiva valida, retorna um valor positivo.
 		int value_return = -1;
 		if(is_org(name)) {
@@ -46,6 +44,34 @@ int directive_verifier(char **string_end, char **directive_parameter) {
 			value_return = 5;
 		}
 		free(name);
+
+		//Encontra o parametro da diretiva e o salva em directive_parameter.
+		while(((*string_end) == ' ') && ((*string_end) != '\n') && ((*string_end) != '\0')) {
+			string_end++;
+		}
+		if((*string_end) != '\0') {
+			//String_start armazena o comeco do parametro.
+			string_start = string_end;
+			printf("String_start =%c==\n", *string_start);
+			//String_end armazena o final do parametro.
+			while(((*string_end) != ' ') && ((*string_end) != '\n') && (*string_end != '\0')) {
+				string_end++;
+			}
+			printf("string_end =%c==\n", *string_end);
+			int i = 0;
+			for(char *probe = string_start ; probe != string_end; probe++, i++) {
+				*(directive_parameter + i) = *probe;
+				printf("directive_parameter[i] = %c\n", *(directive_parameter + i));
+			}
+			printf("a\n");
+			directive_parameter[i] = '\0';
+			printf("b\n");
+			printf("A diretiva tem parametro ===%s===\n", (directive_parameter));
+		} else {
+			printf("xablau\n");
+			value_return = -1;
+		}
+
 		return value_return;
 	} else {
 		return 0;

@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
 					char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-					int has_directive = directive_verifier(&string_end, &directive_parameter);
+					int has_directive = directive_verifier(string_end, directive_parameter);
 
 					//Atua para a diretiva .org
 					if(has_directive == 1) {

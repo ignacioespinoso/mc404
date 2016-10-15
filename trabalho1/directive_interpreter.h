@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include "argument_manipulator.h"
 
-int directive_verifier(char **probe, char **directive_parameter);
+int directive_verifier(char *probe, char *directive_parameter);
 
 bool is_org(char *name);
 
