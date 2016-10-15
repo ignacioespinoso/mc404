@@ -29,7 +29,6 @@ int label_verifier(char *line, Label_list head_node, char **string_end) {
 		}
 
 		//Verifica se logo apos os dois pontos (":") ha algum caractere.
-
 		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
 			label_error = true;
 		}
@@ -49,12 +48,6 @@ int label_verifier(char *line, Label_list head_node, char **string_end) {
 
 		if(strcmp(label_name, head_node->name) == 0) {
 			label_error = true;
-		}
-
-		(*string_end)++;
-		//Percorre os espacos apos o rotulo.
-		while(((**string_end) == ' ') && ((**string_end) != '\n') && ((**string_end) != '\0')) {
-			(*string_end)++;
 		}
 	}
 

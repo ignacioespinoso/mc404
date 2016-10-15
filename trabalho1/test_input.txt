@@ -1,8 +1,8 @@
 .set
 .org
 .xablau
-rotulo: .xablau
-rotulo1:                 .xablau
+rotulo: .wfill
+rotulo1:                 .word
 rotulo2:hue
 rotulo3:    s.xablau
 rotulo4:    s

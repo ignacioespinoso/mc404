@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include "argument_manipulator.h"
 
 int directive_verifier(char **probe, char **directive_parameter);
 

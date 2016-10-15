@@ -1,20 +1,22 @@
 #include "directive_interpreter.h"
 
+///////////Verifica se existe diretiva e argumentos da mesma validos////////////
 int directive_verifier(char **string_end, char **directive_parameter) {
 	char *string_start = (*string_end);
 	bool has_directive = false;
 
 	// Percorre a linha procurando por uma diretiva.
 	while(((*string_start) == ' ') && ((*string_start) != '\n') && ((*string_start) != '\0')) {
-		string_start++;
+		(*string_start)++;
 	}
 	// Caso o primeiro caractere diferente de ' ' seja '.', ha diretiva.
 	if(*string_start == '.') {
 		has_directive = true;
 	}
-	printf("String start = %c", *string_start);
+
 	//Verifica se a diretiva eh valida
 	if(has_directive) {
+		string_start++;
 
 		// Encontra o final do nome da diretiva
 		for((*string_end) = string_start;
@@ -24,18 +26,33 @@ int directive_verifier(char **string_end, char **directive_parameter) {
 		//Cria uma string 'name' que armazena o nome da diretiva.
 		char *name = malloc(MAX_SIZE + 1 * sizeof(char));
 		int i = 0;
-		for(char *probe = string_start ; probe != *string_end; probe++) {
-			name[i] = **string_end;
-			i++;
+		for(char *probe = string_start ; probe != *string_end; probe++, i++) {
+			name[i] = *probe;
 		}
 		name[i] = '\0';
 
-		return 1;
+		//Verifica se o nome da diretiva eh valido. Nao verifica se os argumentos sao validos.
+		//Caso seja uma diretiva valida, retorna um valor positivo.
+		int value_return = -1;
+		if(is_org(name)) {
+			value_return = 1;
+		} else if(is_word(name)) {
+			value_return = 2;
+		} else if(is_align(name)) {
+			value_return = 3;
+		} else if(is_wfill(name)) {
+			value_return = 4;
+		} else if(is_set(name)) {
+			value_return = 5;
+		}
+		free(name);
+		return value_return;
 	} else {
 		return 0;
 	}
 }
 
+///////////////////Metodos de verificacao de nome da diretiva///////////////////
 bool is_org(char *name) {
 	if(strcmp(name, "org") == 0) {
 		return true;
@@ -77,6 +94,7 @@ bool is_set(char *name) {
 	}
 }
 
+//////////////////////Metodos de aplicacao das diretivas////////////////////////
 // void apply_org(int *address, char *directive_parameter);
 //
 // void apply_word(int *address, char *directive_parameter, int **memory_map);
