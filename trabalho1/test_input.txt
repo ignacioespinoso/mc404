@@ -1,5 +1,5 @@
 
-.wfill 53 rotulo:    
+rotulo:    .org 0x41
 rotulo1:                 .word 0x4138F
 rotulo2:hue
 .set

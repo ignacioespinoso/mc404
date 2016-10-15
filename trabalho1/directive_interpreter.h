@@ -21,15 +21,15 @@ bool is_wfill(char *name);
 
 bool is_set(char *name);
 
-// void apply_org(int *address, char *directive_parameter);
+bool apply_org(int *address, char *directive_parameter);
+
+// bool apply_word(int *address, char *directive_parameter, int **memory_map);
 //
-// void apply_word(int *address, char *directive_parameter, int **memory_map);
+// bool apply_align(int *address, char *directive_parameter);
 //
-// void apply_align(int *address, char *directive_parameter);
+// bool apply_wfill(int *address, int **memory_map, char *directive_parameter);
 //
-// void apply_wfill(int *address, int **memory_map, char *directive_parameter);
-//
-// void apply_set(&aliases, char *directive_parameter);
+// bool apply_set(&aliases, char *directive_parameter);
 
 
 #endif /*DIRECTIVE_INTERPRETER_DEFINED*/

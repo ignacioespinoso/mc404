@@ -52,23 +52,17 @@ int directive_verifier(char *string_end, char *directive_parameter) {
 		if((*string_end) != '\0') {
 			//String_start armazena o comeco do parametro.
 			string_start = string_end;
-			printf("String_start =%c==\n", *string_start);
 			//String_end armazena o final do parametro.
 			while(((*string_end) != ' ') && ((*string_end) != '\n') && (*string_end != '\0')) {
 				string_end++;
 			}
-			printf("string_end =%c==\n", *string_end);
 			int i = 0;
 			for(char *probe = string_start ; probe != string_end; probe++, i++) {
 				*(directive_parameter + i) = *probe;
-				printf("directive_parameter[i] = %c\n", *(directive_parameter + i));
 			}
-			printf("a\n");
 			directive_parameter[i] = '\0';
-			printf("b\n");
 			printf("A diretiva tem parametro ===%s===\n", (directive_parameter));
 		} else {
-			printf("xablau\n");
 			value_return = -1;
 		}
 
@@ -120,13 +114,30 @@ bool is_set(char *name) {
 	}
 }
 
-//////////////////////Metodos de aplicacao das diretivas////////////////////////
-// void apply_org(int *address, char *directive_parameter);
+//////Metodos de aplicacao das diretivas e avaliacao dos seus parametros////////
+//Os metodos retornam true para uma aplicacao bem sucedida e false caso contrario.
+bool apply_org(int *address, char *directive_parameter) {
+	char *string_start = directive_parameter;
+	int base = find_base(string_start);
+	int value;
+	if(base == 10) {
+		printf("1\n");
+		value = strtol(directive_parameter, &string_start, 10);
+	} else if(base == 16) {
+		printf("2\n");
+		value = strtol(directive_parameter, &string_start, 16);
+	} else {
+		printf("3\n");
+		return false;
+	}
+	printf("value = %d\n", value);
+	return true;
+}
+
+// bool apply_word(int *address, char *directive_parameter, int **memory_map);
 //
-// void apply_word(int *address, char *directive_parameter, int **memory_map);
+// bool apply_align(int *address, char *directive_parameter);
 //
-// void apply_align(int *address, char *directive_parameter);
+// bool apply_wfill(int *address, int **memory_map, char *directive_parameter);
 //
-// void apply_wfill(int *address, int **memory_map, char *directive_parameter);
-//
-// void apply_set(&aliases, char *directive_parameter);
+// bool apply_set(&aliases, char *directive_parameter);

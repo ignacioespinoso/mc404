@@ -62,8 +62,9 @@ int main(int argc, char *argv[]) {
 
 					//Atua para a diretiva .org
 					if(has_directive == 1) {
-						// apply_org(&address, directive_parameter);
+
 						printf("Possui diretiva .org na linha %d\n", line_counter);
+						apply_org(&address, directive_parameter);
 					//Atua para a diretiva .word
 					} else if(has_directive == 2) {
 						// apply_word(&address, directive_parameter, &memory_map);
