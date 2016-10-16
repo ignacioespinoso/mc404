@@ -11,8 +11,8 @@
 #include <ctype.h>
 #include "structures.h"
 
-bool instruction_applier(char **string_end, Label_list label_head_node
-												, int *address, char **memory_map, int *right, int line_counter);
+int instruction_applier(char **string_end, Label_list label_head_node
+												, int *address, char **memory_map, int *right, int line_counter, bool *be_printed);
 
 
 #endif /*INSTRUCTION_INTERPRETER_DEFINED*/

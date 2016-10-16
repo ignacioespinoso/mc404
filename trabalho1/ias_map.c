@@ -6,7 +6,10 @@
 char** new_memory_map () {
 	char **map = malloc(MAX_MAP_SIZE * sizeof(char *));
 	for(int i = 0; i < MAX_MAP_SIZE; i++) {
-		map[i] = malloc(10 * sizeof(char));
+		map[i] = malloc(11 * sizeof(char));
+	}
+	for(int i = 0; i < MAX_MAP_SIZE; i++) {
+		map[i][10] = '\0';
 	}
 
 	return map;
@@ -25,7 +28,7 @@ void print_map (char **map, bool *be_printed, int map_size) {
 	for(int i = 0;	i < MAX_MAP_SIZE; i++) {
 		//Caso o endereco atual foi escrito, eh impressa a palavra de memoria.
 		if(be_printed[i]) {
-			printf("%.3x ", i);
+			printf("%.3X ", i);
 			for(int j = 0; j < 10; j++) {
 				printf("%c", map[i][j]);
 				if((j == 1) ||(j == 4) ||(j == 6)) {

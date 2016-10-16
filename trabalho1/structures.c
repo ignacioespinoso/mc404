@@ -200,3 +200,65 @@ int find_mnemonic(char *mnemonic, char **mnemonic_list) {
 
 	return -1;
 }
+
+char *find_op_code(int mnemonic_type, int right) {
+	char *opcode = malloc(2 * sizeof(char));
+	if(mnemonic_type == 0) {
+		strcpy(opcode, "01");
+	} else if (mnemonic_type == 1) {
+		strcpy(opcode, "02");
+	} else if (mnemonic_type == 2) {
+		strcpy(opcode, "03");
+	} else if (mnemonic_type == 3) {
+		strcpy(opcode, "0A");
+	} else if (mnemonic_type == 4) {
+		strcpy(opcode, "09");
+	} else if (mnemonic_type == 5) {
+		strcpy(opcode, "21");
+	} else if (mnemonic_type == 6) {
+		if(right == 1) {
+			strcpy(opcode, "0E");
+		} else if(right == -1){
+			strcpy(opcode, "0D");
+		} else {
+			return NULL; //Right possui valor invalido
+		}
+	} else if (mnemonic_type == 7) {
+		if(right == 1) {
+			strcpy(opcode, "10");
+		} else if(right == -1){
+			strcpy(opcode, "0F");
+		} else {
+			return NULL; //Right possui valor invalido
+		}
+	} else if (mnemonic_type == 8) {
+		strcpy(opcode, "05");
+	} else if (mnemonic_type == 9) {
+		strcpy(opcode, "07");
+	} else if (mnemonic_type == 10) {
+		strcpy(opcode, "06");
+	} else if (mnemonic_type == 11) {
+		strcpy(opcode, "08");
+	} else if (mnemonic_type == 12) {
+		strcpy(opcode, "0B");
+	} else if (mnemonic_type == 13) {
+		strcpy(opcode, "0C");
+	} else if (mnemonic_type == 14) {
+		strcpy(opcode, "14");
+	} else if (mnemonic_type == 15) {
+		strcpy(opcode, "15");
+	} else if (mnemonic_type == 16) {
+		if(right == 1) {
+			strcpy(opcode, "13");
+		} else if(right == -1){
+			strcpy(opcode, "12");
+		} else {
+			return NULL; //Right possui valor invalido
+		}
+		strcpy(opcode, "STaddr");
+	} else if (mnemonic_type == -1){
+		return NULL; //Tipo de mnemonico invalido.
+	}
+
+	return opcode;
+}

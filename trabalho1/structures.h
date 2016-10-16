@@ -56,4 +56,8 @@ char** new_mnemonic_list();
 
 //Compara o mnemonico dado com a lista, retornando um valor positivo caso o mnemonico seja valido.
 int find_mnemonic(char *mnemonic, char **mnemonic_list);
+
+//Retorna o opcode para um dado tipo de mnemonico.
+char *find_op_code(int mnemonic_type, int right);
+
 #endif /*STRUCTURES_DEFINED*/

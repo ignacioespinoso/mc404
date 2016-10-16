@@ -118,7 +118,11 @@ int main(int argc, char *argv[]) {
 						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
 					} else {
 ////////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
-						printf("Sem diretiva na linha %d\n", line_counter);
+						int instruction = instruction_applier(&string_end, label_head_node
+												, &address, memory_map, &right, line_counter, NULL);
+						if(instruction == -1) {
+							dont_print = true;
+						}
 					}
 					//////////////////Identifica se a linha possui um comentario////////////////////////
 					while(((*string_end) != ' ') && ((*string_end) != '\n') && ((*string_end) != '\0')) {
@@ -138,7 +142,11 @@ int main(int argc, char *argv[]) {
 		print_labels(label_head_node);
 		fclose(file);
 
-////////////////////Inicia a segunda leitura do arquivo/////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////Inicia a segunda leitura do arquivo/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		printf("=======================INICIANDO SEGUNDA LEITURA\n" );
 		line_counter = 1;
 		address = 0;
@@ -146,12 +154,9 @@ int main(int argc, char *argv[]) {
 		dont_print = false;
 		file = fopen(argv[1], "r");
 
-
-
 		//Le o arquivo linha por linha
 		while(fgets(line, (MAX_SIZE-1) * sizeof(char), file)) {
 			char *string_end = line;
-
 
 ////////Identifica se a linha possui um rotulo valido e cria um novo caso haja.////////////
 			if(!dont_print) {
@@ -160,7 +165,6 @@ int main(int argc, char *argv[]) {
 																				, NULL);
 
 				if(has_label == 1) {
-					printf("yaaaaaaaaaaaaaaaaay\n");
 					//Percorre os espacos apos o rotulo.
 					string_end++;
 					while(((*string_end) == ' ') && ((*string_end) != '\n') && ((*string_end) != '\0')) {
@@ -208,10 +212,9 @@ int main(int argc, char *argv[]) {
 //////////Atua para a diretiva .wfill
 					} else if(has_directive == 4) {
 						if(right == 1) {
-
 							dont_print = true;
 						} else if (!apply_wfill(&address, directive_parameter, memory_map,
-							 				&string_end, label_head_node, alias_head_node, be_printed, line_counter)){
+											&string_end, label_head_node, alias_head_node, be_printed, line_counter)){
 
 							dont_print = true;
 						}
@@ -226,12 +229,11 @@ int main(int argc, char *argv[]) {
 						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
 					} else {
 //////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
-						bool instruction = instruction_applier(&string_end, label_head_node
-																		, &address, memory_map, &right, line_counter);
-						if(instruction == false) {
+						int instruction = instruction_applier(&string_end, label_head_node
+																		, &address, memory_map, &right, line_counter, be_printed);
+						if(instruction == -1) {
 							dont_print = true;
 						}
-						printf("Sem diretiva na linha %d\n", line_counter);
 					}
 				}
 			}
@@ -245,6 +247,7 @@ int main(int argc, char *argv[]) {
 						string_end++;
 					}
 				} else if (((*string_end) != '\n') && ((*string_end) != '\0')) {
+					printf("33string_end =%c=\n", *string_end);
 					printf("ERROR on line %d\n", line_counter);
 					printf("Caractere inválido!\n");
 					dont_print = true; //Caracteres invalidos inseridos!

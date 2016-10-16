@@ -30,6 +30,7 @@ int directive_verifier(char **string_end, char *directive_parameter, int line_co
 			name[i] = *probe;
 		}
 		name[i] = '\0';
+
 		//Verifica se o nome da diretiva eh valido. Nao verifica se os parametros sao validos.
 		//Caso seja uma diretiva valida, retorna um valor positivo.
 		int value_return = -1;
@@ -163,7 +164,7 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 			Alias *symbol = find_alias(alias_head_node, directive_parameter);
 			if(token) {
 				int value = token->address;
-					sprintf((memory_map[*address]), "%010X", value);
+				sprintf((memory_map[*address]), "%010X", value);
 
 			} else if(symbol) {
 				unsigned int value = symbol->value;
@@ -174,16 +175,25 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 				return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
 			}
 		} else {
+			int value = strtol(directive_parameter, &int_end, base);
+			if(value < 0) {
+				memory_map[*address][0] = 'F';
+				memory_map[*address][1] = 'F';
+			} else {
+				memory_map[*address][0] = '0';
+				memory_map[*address][1] = '0';
+			}
 			if(base == 10) {
-				int value = strtol(directive_parameter, &int_end, base);
-					sprintf((memory_map[*address]), "%.8X", value);
+				//Mantem os dois primeiros digitos para o sinal.
+				sprintf((memory_map[*address] + 2), "%.8X", value);
 			} else {
 				if(strlen(directive_parameter) != 12) {
 					printf("ERROR on line %d\n", line_counter);
 					printf("Valor hexadecimal invalido!\n");
 					return false;
 				}
-					strcpy((memory_map[*address]), directive_parameter);
+				//Mantem os dois primeiros digitos para o sinal.
+				sprintf((memory_map[*address]+ 2), "%.8X", value);
 			}
 		}
 		be_printed[*address] = true;
@@ -243,7 +253,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 		parameter_2[i] = *probe;
 	}
 	parameter_2[i] = '\0';
-
+	printf("PARAMETRO1 =%s=, PARAMETRO2 =%s=\n", directive_parameter, parameter_2);
 	int base_2 = find_base(parameter_2);
 
 	//Verifica o primeiro parametro.
@@ -262,8 +272,9 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 	if(be_printed) {
 		if(base_2 == -1) {
 			//Verifica nos simbolos e rotulos
-			Label *token = find_label(label_head_node, directive_parameter);
-			Alias *symbol = find_alias(alias_head_node, directive_parameter);
+			printf("name =%s=\n", directive_parameter);
+			Label *token = find_label(label_head_node, parameter_2);
+			Alias *symbol = find_alias(alias_head_node, parameter_2);
 			if(token) {
 				int value = token->address;
 				for(int i = 0; i < repetitions; i++) {
@@ -296,6 +307,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 					(*address)++;
 				}
 			} else {
+
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = '0';
 					memory_map[*address][1] = '0';
@@ -305,6 +317,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				}
 			}
 		} else if (base_2 == 16){
+
 			if(strlen(parameter_2) != 12) {
 				printf("ERROR on line %d\n", line_counter);
 				printf("Valor hexadecimal invalido!\n");
@@ -315,7 +328,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = 'F';
 					memory_map[*address][1] = 'F';
-					sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+					sprintf((memory_map[*address]), "%.8X", (unsigned int)value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -323,7 +336,8 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = '0';
 					memory_map[*address][1] = '0';
-					sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+					sprintf((memory_map[*address]), "%.8X", (unsigned int)value);
+					be_printed[*address] = true;
 					(*address)++;
 				}
 			}
@@ -413,7 +427,9 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 		printf("Valor invalido!\n");
 		return false;
 	}
-
-	add_alias(directive_parameter, value, head_node);
+	if(head_node) {
+		add_alias(directive_parameter, value, head_node);
+	}
+	printf("aeaeae2\n");
 	return true;
 }
