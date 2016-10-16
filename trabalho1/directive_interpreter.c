@@ -146,20 +146,46 @@ bool apply_org(int *address, char *directive_parameter) {
 	return true;
 }
 
-// bool apply_word(int *address, char *directive_parameter, int **memory_map) {
-// 	//Avalia endereco invalido
-// 	if((*address > 1024) || (*address < 0)) {
-// 		return -1;
-// 	}
-// 	int base = find_base(directive_parameter);
-// 	if(base == 10) {
-//
-// 	} else if (base == 16) {
-//
-// 	} else {
-//
-// 	}
-// }
+bool apply_word(int *address, char *directive_parameter, char **memory_map
+								, Label_list label_head_node, Alias_list alias_head_node, bool *be_printed) {
+
+	printf("3ADDRESS = %d\n", *address);
+	//Avalia o tamanho do endereco
+	if((*address > 1024) || (*address < 0)) {
+		return false;
+	}
+	int base = find_base(directive_parameter);
+	char *int_end;
+	//Caso o parametro nao possua uma base valida, eh feita verificacao para rotulos e simbolos.
+	if(base == -1) {
+		Label *token = find_label(label_head_node, directive_parameter);
+		Alias *symbol = find_alias(alias_head_node, directive_parameter);
+		if(token) {
+			int value = token->address;
+			sprintf((memory_map[*address]), "%010X", value);
+			base = 10;
+
+		} else if(symbol) {
+			unsigned int value = symbol->value;
+			sprintf((memory_map[*address]), "%010X", value);
+			base = 10;
+		} else {
+			return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
+		}
+	} else {
+		if(base == 10) {
+			int value = strtol(directive_parameter, &int_end, 10);
+			sprintf((memory_map[*address]), "%.8X", value);
+		} else {
+			strcpy((memory_map[*address]), directive_parameter);
+		}
+	}
+
+	be_printed[*address] = true;
+	(*address)++;
+	return true;
+
+}
 
 bool apply_align(int *address, char *directive_parameter) {
 	char *string_start = directive_parameter;

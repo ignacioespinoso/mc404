@@ -29,8 +29,9 @@ bool is_set(char *name);
 //Os metodos retornam true para uma aplicacao bem sucedida e false caso contrario.
 bool apply_org(int *address, char *directive_parameter);
 
-// bool apply_word(int *address, char *directive_parameter, int **memory_map);
-//
+bool apply_word(int *address, char *directive_parameter, char **memory_map
+								, Label_list label_head_node, Alias_list alias_head_node, bool *be_printed);
+
 bool apply_align(int *address, char *directive_parameter);
 
 // bool apply_wfill(int *address, int **memory_map, char *directive_parameter);

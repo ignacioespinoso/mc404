@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 		Alias_list alias_head_node = new_alias_list();
 
 		//Inicializa o mapa de memoria e seus enderecos a serem impressos.
-		int **memory_map = new_memory_map(MAX_MAP_SIZE);
+		char **memory_map = new_memory_map();
 		bool *be_printed = calloc(MAX_MAP_SIZE, sizeof(bool));
 
 		//Le o arquivo linha por linha
@@ -68,13 +68,17 @@ int main(int argc, char *argv[]) {
 //////////Atua para a diretiva .word
 					} else if(has_directive == 2) {
 						printf("Possui diretiva .word na linha %d\n", line_counter);
-						// apply_word(&address, directive_parameter, &memory_map);
+						if(right == 1) {
+							dont_print = true;
+						} else if (!apply_word(&address, directive_parameter, memory_map
+																		, label_head_node, alias_head_node, be_printed)){
 
+							dont_print = true;
+						}
 
 //////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
 						printf("Possui diretiva .align na linha %d\n", line_counter);
-						address = 35;
 						if(apply_align(&address, directive_parameter)) {
 							right = -1;
 						} else {
@@ -124,6 +128,10 @@ int main(int argc, char *argv[]) {
 		if(dont_print) {
 			printf("Nao vai imprimir mapa!\n");
 		} else {
+			printf("vai imprimir!\n");
+			if(be_printed[0]) {
+				printf("imprime o 1!\n");
+			}
 			print_map(memory_map, be_printed, MAX_MAP_SIZE);
 		}
 		//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.
