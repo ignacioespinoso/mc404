@@ -67,7 +67,6 @@ int directive_verifier(char **string_end, char *directive_parameter) {
 					*(directive_parameter + i) = *probe;
 				}
 				directive_parameter[i] = '\0';
-				printf("A diretiva tem parametro ===%s===\n", (directive_parameter));
 			} else {
 				value_return = -1;
 			}
@@ -133,23 +132,22 @@ bool apply_org(int *address, char *directive_parameter) {
 	}
 
 	if(base == 10) {
-		printf("1\n");
 		value = strtol(directive_parameter, &string_start, 10);
 	} else if(base == 16) {
+		if(strlen(directive_parameter) != 12) {
+			return false;
+		}
 		value = strtol(directive_parameter, &string_start, 16);
 	} else {
 		return false;
 	}
 	//Sendo um parametro valido, atualiza o endereco atual.
 	*address = value;
-	printf("value = %x\n", value);
 	return true;
 }
 
 bool apply_word(int *address, char *directive_parameter, char **memory_map
 								, Label_list label_head_node, Alias_list alias_head_node, bool *be_printed) {
-
-	printf("3ADDRESS = %d\n", *address);
 	//Avalia o tamanho do endereco
 	if((*address > 1024) || (*address < 0)) {
 		return false;
@@ -163,20 +161,21 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 		if(token) {
 			int value = token->address;
 			sprintf((memory_map[*address]), "%010X", value);
-			base = 10;
 
 		} else if(symbol) {
 			unsigned int value = symbol->value;
 			sprintf((memory_map[*address]), "%010X", value);
-			base = 10;
 		} else {
 			return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
 		}
 	} else {
 		if(base == 10) {
-			int value = strtol(directive_parameter, &int_end, 10);
+			int value = strtol(directive_parameter, &int_end, base);
 			sprintf((memory_map[*address]), "%.8X", value);
 		} else {
+			if(strlen(directive_parameter) != 12) {
+				return false;
+			}
 			strcpy((memory_map[*address]), directive_parameter);
 		}
 	}
@@ -200,8 +199,115 @@ bool apply_align(int *address, char *directive_parameter) {
 	}
 }
 
-// bool apply_wfill(int *address, int **memory_map, char *directive_parameter);
-//
+bool apply_wfill(int *address, char *directive_parameter, char **memory_map, char **string_end
+								, Label_list label_head_node, Alias_list alias_head_node, bool *be_printed) {
+	//Avalia o tamanho do endereco
+	if((*address > 1024) || (*address < 0)) {
+		return false;
+	}
+	//Encontra a base do segundo parametro
+	//String_start armazena o comeco do segundo parametro.
+	char *string_start = *string_end;
+	//Encontra o segundo parametro da diretiva.
+	while(((*string_start == ' ') || (*string_start == '\t')) && ((*string_start) != '\n') && (*string_start != '\0')) {
+		(*string_end)++;
+		string_start++;
+	}
+	//String_end armazena o final do segundo parametro.
+	while(((**string_end) != ' ') && ((**string_end) != '\t') && ((**string_end) != '\n') && (**string_end != '\0')) {
+		(*string_end)++;
+	}
+
+	//Caso nao haja segundo parametro, ha erro.
+	if(((*string_start) == '\n') || ((*string_start) == '\0')) {
+		return false;
+	}
+	//Armazena os valores entre o string_end e string_start em parameter_2.
+	char *parameter_2 = malloc(MAX_SIZE + 1 * sizeof(char));
+	int i = 0;
+	for(char *probe = string_start ; probe != *string_end; probe++, i++) {
+		parameter_2[i] = *probe;
+	}
+	parameter_2[i] = '\0';
+
+	int base_2 = find_base(parameter_2);
+
+	//Verifica o primeiro parametro.
+	int base_1 = find_base(directive_parameter);
+	if( base_1 != 10) {
+		return false;
+	}
+	int repetitions = strtol(directive_parameter, &string_start, base_1);
+	if(((*address) + repetitions) > 1024) {
+		return false; //O numero de repeticoes ira ultrapassar o limite das palavras de memoria.
+	}
+	if(base_2 == -1) {
+		//Verifica nos simbolos e rotulos
+		Label *token = find_label(label_head_node, directive_parameter);
+		Alias *symbol = find_alias(alias_head_node, directive_parameter);
+		if(token) {
+			int value = token->address;
+			for(int i = 0; i < repetitions; i++) {
+				sprintf((memory_map[*address]), "%010X", value);
+				be_printed[*address] = true;
+				(*address)++;
+			}
+
+		} else if(symbol) {
+			unsigned int value = symbol->value;
+			for(int i = 0; i < repetitions; i++) {
+				sprintf((memory_map[*address]), "%010X", value);
+				be_printed[*address] = true;
+				(*address)++;
+			}
+		} else {
+			return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
+		}
+		printf("\n\n1\n\n");
+	} else if (base_2 == 10) {
+		long int value = strtol(parameter_2, &string_start, 10);
+		if(value < 0) {
+			for(int i = 0; i < repetitions; i++) {
+				memory_map[*address][0] = 'F';
+				memory_map[*address][1] = 'F';
+				sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+				be_printed[*address] = true;
+				(*address)++;
+			}
+		} else {
+			for(int i = 0; i < repetitions; i++) {
+				memory_map[*address][0] = '0';
+				memory_map[*address][1] = '0';
+				sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+				be_printed[*address] = true;
+				(*address)++;
+			}
+		}
+	} else if (base_2 == 16){
+		if(strlen(parameter_2) != 12) {
+			return false;
+		}
+		long int value = strtol(parameter_2, &string_start, 16);
+		if(value < 0) {
+			for(int i = 0; i < repetitions; i++) {
+				memory_map[*address][0] = 'F';
+				memory_map[*address][1] = 'F';
+				sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+				be_printed[*address] = true;
+				(*address)++;
+			}
+		} else {
+			for(int i = 0; i < repetitions; i++) {
+				memory_map[*address][0] = '0';
+				memory_map[*address][1] = '0';
+				sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+				(*address)++;
+			}
+		}
+	}
+	return true;
+}
+
 bool apply_set(Alias_list head_node, char *directive_parameter
 								, char **string_end, Label_list label_head_node) {
 	//String_start armazena o comeco do segundo parametro.
@@ -226,7 +332,7 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 	bool valid_parameter = true;
 	char *parameter_2 = malloc(MAX_SIZE + 1 * sizeof(char));
 	int i = 0;
-	for(char *probe = string_start ; probe != *string_end; probe++, i++) {
+	for(char *probe = string_start ; probe != *string_end ; probe++, i++) {
 		parameter_2[i] = *probe;
 	}
 	parameter_2[i] = '\0';
@@ -255,17 +361,18 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 	int base = find_base(parameter_2);
 	char *pointer_end;
 	if(base == 10) {
-		printf("Base 10\n");
 		value = strtol(parameter_2, &pointer_end, 10);
 	} else if(base == 16) {
-		printf("Base 16\n");
+		if(strlen(parameter_2) != 12) {
+			return false;
+		}
 		value = strtol(parameter_2, &pointer_end, 16);
 	} else {
-		printf("Base com erro\n");
 		valid_parameter = false;
 	}
 
 	if(valid_parameter) {
+
 		add_alias(directive_parameter, value, head_node);
 		return true;
 	} else {

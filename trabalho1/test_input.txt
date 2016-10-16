@@ -1,3 +1,4 @@
-.set amomuitotudoisso 0xDDFF
-rotulo:
-.word amomuitotudoisso
+.set xablau 0x000000DDFF
+rotulo: .wfill 3 1
+.word xablau
+rotulo2:

@@ -87,9 +87,13 @@ int main(int argc, char *argv[]) {
 
 //////////Atua para a diretiva .wfill
 					} else if(has_directive == 4) {
-						// apply_wfill(&address, &memory_map, directive_parameter);
 						printf("Possui diretiva .wfill na linha %d\n", line_counter);
-
+						if(right == 1) {
+							dont_print = true;
+						} else if (!apply_wfill(&address, directive_parameter, memory_map,
+							 				&string_end, label_head_node, alias_head_node, be_printed)){
+							dont_print = true;
+						}
 
 //////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
@@ -128,10 +132,6 @@ int main(int argc, char *argv[]) {
 		if(dont_print) {
 			printf("Nao vai imprimir mapa!\n");
 		} else {
-			printf("vai imprimir!\n");
-			if(be_printed[0]) {
-				printf("imprime o 1!\n");
-			}
 			print_map(memory_map, be_printed, MAX_MAP_SIZE);
 		}
 		//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.

@@ -15,6 +15,10 @@ int find_base(char *string_start) {
 		}
 		return 16;
 	} else {
+		if(!isdigit(*string_start) && (*string_start != '-')) {
+			return -1;
+		}
+		string_start++;
 		while(((*string_start) != ' ') && (*string_start) != '\0') {
 			//Retorna -1 caso seja um numero decimal invalido.
 			if(!isdigit(*string_start)) {

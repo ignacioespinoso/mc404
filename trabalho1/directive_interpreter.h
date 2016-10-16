@@ -34,8 +34,9 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 
 bool apply_align(int *address, char *directive_parameter);
 
-// bool apply_wfill(int *address, int **memory_map, char *directive_parameter);
-//
+bool apply_wfill(int *address, char *directive_parameter, char **memory_map, char **string_end
+								, Label_list label_head_node, Alias_list alias_head_node, bool *be_printed);
+
 bool apply_set(Alias_list head_node, char *directive_parameter
 								, char **string_end, Label_list label_head_node);
 
