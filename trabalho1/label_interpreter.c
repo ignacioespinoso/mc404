@@ -4,7 +4,7 @@
 //Retorna 1 para rotulo valido, 0 para ausencia de rotulo e -1 para rotulo invalido
 int label_verifier(char *line, char **string_end, char *label_name
 										, Label_list head_node){
-	bool has_label = false, label_error = false;
+	bool has_label = false;
 	char *string_start = line;
 
 	int j = 0;
@@ -22,19 +22,19 @@ int label_verifier(char *line, char **string_end, char *label_name
 		char *verifier = string_start;
 		while(verifier != (*string_end)) {
 			if(!isalnum(*verifier) && (*verifier != '_')) {
-				label_error = true;
+				return -1;
 			}
 			verifier++;
 		}
 
 		//Verifica se o primeiro caractere eh um numero.
 		if(isdigit(*string_start)) {
-			label_error = true;
+			return -1;
 		}
 
 		//Verifica se logo apos os dois pontos (":") ha algum caractere.
 		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\n') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
-			label_error = true;
+			return -1;
 		}
 	}
 	// Verifica se ha um rotulo com mesmo nome na lista.
@@ -53,16 +53,14 @@ int label_verifier(char *line, char **string_end, char *label_name
 			}
 			//Verifica se ha rotulo com mesmo nome ou se o nome do rotulo ultrapassou o limite
 			if(label_probe && ((strcmp(label_name, label_probe->name) == 0) || (strlen(label_name) > MAX_LABEL_SIZE))) {
-				label_error = true;
+				return -1;
 			}
 		}
 	}
 
 	//... Pode ser definida a existencia de um rotulo.
-	if(!label_error && has_label) {
+	if(has_label) {
 		return 1;
-	} else if(label_error && has_label) {
-		return -1;
 	} else {
 		return 0;
 	}

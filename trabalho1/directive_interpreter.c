@@ -133,12 +133,10 @@ bool apply_org(int *address, char *directive_parameter, int line_counter, FILE *
 		if(strlen(directive_parameter) != 12) {
 			if(output) {
 				fprintf(output, "ERROR on line %d\n", line_counter);
-				// fprintf(output, "Valor hexadecimal inválido!\n");
-				fprintf(output, "mensagem!\n");
+				fprintf(output, "Valor hexadecimal inválido!\n");
 			} else {
 				printf("ERROR on line %d\n", line_counter);
-				// printf("Valor hexadecimal inválido!\n");
-				printf("mensagem!\n");
+				printf("Valor hexadecimal inválido!\n");
 			}
 			return false;
 		}
@@ -146,12 +144,10 @@ bool apply_org(int *address, char *directive_parameter, int line_counter, FILE *
 	} else {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Valor inválido!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Valor inválido!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Valor inválido!\n");
-			printf("mensagem!\n");
+			printf("Valor inválido!\n");
 		}
 		return false;
 	}
@@ -167,16 +163,15 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 	if((*address > 1024) || (*address < 0)) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Endereco inválido!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Endereco inválido!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Endereco inválido!\n");
-			printf("mensagem!\n");
+			printf("Endereco inválido!\n");
 		}
 		return false;
 	}
 	int base = find_base(directive_parameter);
+
 	char *int_end;
 	//Caso o parametro nao possua uma base valida, eh feita verificacao para rotulos e simbolos.
 	if(be_printed) {
@@ -193,12 +188,10 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 			} else {
 				if(output) {
 					fprintf(output, "ERROR on line %d\n", line_counter);
-					// fprintf(output, "Valor de escrita inválido!\n");
-					fprintf(output, "mensagem!\n");
+					fprintf(output, "Valor de escrita inválido!\n");
 				} else {
 					printf("ERROR on line %d\n", line_counter);
-					// printf("Valor de escrita inválido!\n");
-					printf("mensagem!\n");
+					printf("Valor de escrita inválido!\n");
 				}
 				return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
 			}
@@ -218,12 +211,10 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 				if(strlen(directive_parameter) != 12) {
 					if(output) {
 						fprintf(output, "ERROR on line %d\n", line_counter);
-						// fprintf(output, "Valor hexadecimal inválido!\n");
-						fprintf(output, "mensagem!\n");
+						fprintf(output, "Valor hexadecimal inválido!\n");
 					} else {
 						printf("ERROR on line %d\n", line_counter);
-						// printf("Valor hexadecimal inválido!\n");
-						printf("mensagem!\n");
+						printf("Valor hexadecimal inválido!\n");
 					}
 					return false;
 				}
@@ -239,7 +230,7 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 
 }
 
-bool apply_align(int *address, char *directive_parameter, int line_counter, FILE *output) {
+bool apply_align(int *address, char *directive_parameter, int line_counter, int *right, FILE *output) {
 	char *string_start = directive_parameter;
 	if(find_base(string_start) == 10) {
 		int value = strtol(directive_parameter, &string_start, 10);
@@ -250,12 +241,10 @@ bool apply_align(int *address, char *directive_parameter, int line_counter, FILE
 	} else {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Valor não é hexadecimal!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Valor não é hexadecimal!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Valor não é hexadecimal!\n");
-			printf("mensagem!\n");
+			printf("Valor não é hexadecimal!\n");
 		}
 		return false;
 	}
@@ -267,12 +256,10 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 	if((*address > 1024) || (*address < 0)) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Endereco inválido!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Endereco inválido!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Endereco inválido!\n");
-			printf("mensagem!\n");
+			printf("Endereco inválido!\n");
 		}
 		return false;
 	}
@@ -293,12 +280,10 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 	if(((*string_start) == '\n') || ((*string_start) == '\0')) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Falta o segundo parametro!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Falta o segundo parametro!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Falta o segundo parametro!\n");
-			printf("mensagem!\n");
+			printf("Falta o segundo parametro!\n");
 		}
 		return false;
 	}
@@ -316,12 +301,10 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 	if( base_1 != 10) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Primeiro parametro não é um valor decimal valido!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Primeiro parametro não é um valor decimal valido!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Primeiro parametro não é um valor decimal valido!\n");
-			printf("mensagem!\n");
+			printf("Primeiro parametro não é um valor decimal valido!\n");
 		}
 		return false;
 	}
@@ -329,12 +312,10 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 	if(((*address) + repetitions) > 1024) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Repeticoes ultrapassam limite do mapa de memoria!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Repeticoes ultrapassam limite do mapa de memoria!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Repeticoes ultrapassam limite do mapa de memoria!\n");
-			printf("mensagem!\n");
+			printf("Repeticoes ultrapassam limite do mapa de memoria!\n");
 		}
 		return false; //O numero de repeticoes ira ultrapassar o limite das palavras de memoria.
 	}
@@ -346,7 +327,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 			if(token) {
 				int value = token->address;
 				for(int i = 0; i < repetitions; i++) {
-					sprintf((memory_map[*address]), "%010X", value);
+					sprintf((memory_map[*address]), "%.10X", value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -354,19 +335,17 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 			} else if(symbol) {
 				unsigned int value = symbol->value;
 				for(int i = 0; i < repetitions; i++) {
-					sprintf((memory_map[*address]), "%010X", value);
+					sprintf((memory_map[*address]), "%.10X", value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
 			} else {
 				if(output) {
 					fprintf(output, "ERROR on line %d\n", line_counter);
-					// fprintf(output, "Segundo parametro invalido!\n");
-					fprintf(output, "mensagem!\n");
+					fprintf(output, "Segundo parametro invalido!\n");
 				} else {
 					printf("ERROR on line %d\n", line_counter);
-					// printf("Segundo parametro invalido!\n");
-					printf("mensagem!\n");
+					printf("Segundo parametro invalido!\n");
 				}
 				return false; //O parametro nao eh um nem um numero nem um simbolo nem um rotulo.
 			}
@@ -376,7 +355,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = 'F';
 					memory_map[*address][1] = 'F';
-					sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+					sprintf((memory_map[*address] + 2), "%.8X", (unsigned int)value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -385,7 +364,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = '0';
 					memory_map[*address][1] = '0';
-					sprintf((memory_map[*address]), "%010X", (unsigned int)value);
+					sprintf((memory_map[*address] + 2), "%.8X", (unsigned int)value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -395,12 +374,10 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 			if(strlen(parameter_2) != 12) {
 				if(output) {
 					fprintf(output, "ERROR on line %d\n", line_counter);
-					// fprintf(output, "Valor hexadecimal inválido!\n");
-					fprintf(output, "mensagem!\n");
+					fprintf(output, "Valor hexadecimal inválido!\n");
 				} else {
 					printf("ERROR on line %d\n", line_counter);
-					// printf("Valor hexadecimal inválido!\n");
-					printf("mensagem!\n");
+					printf("Valor hexadecimal inválido!\n");
 				}
 				return false;
 			}
@@ -409,7 +386,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = 'F';
 					memory_map[*address][1] = 'F';
-					sprintf((memory_map[*address]), "%.8X", (unsigned int)value);
+					sprintf((memory_map[*address] + 2), "%.8X", (unsigned int)value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -417,7 +394,7 @@ bool apply_wfill(int *address, char *directive_parameter, char **memory_map, cha
 				for(int i = 0; i < repetitions; i++) {
 					memory_map[*address][0] = '0';
 					memory_map[*address][1] = '0';
-					sprintf((memory_map[*address]), "%.8X", (unsigned int)value);
+					sprintf((memory_map[*address] + 2), "%.8X", (unsigned int)value);
 					be_printed[*address] = true;
 					(*address)++;
 				}
@@ -451,12 +428,10 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 	if(((*string_start) == '\n') || ((*string_start) == '\0')) {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Não ha segundo parametro!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Não ha segundo parametro!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Não ha segundo parametro!\n");
-			printf("mensagem!\n");
+			printf("Não ha segundo parametro!\n");
 		}
 		return false;
 	}
@@ -471,15 +446,13 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 
 	//Avalia o primeiro parametro, que equivale ao simbolo.
 	for(int i = 0; i < strlen(directive_parameter); i++) {
-		if(!isalnum(directive_parameter[i]) && (directive_parameter[i] != '_')) {
+		if((!isalnum(directive_parameter[i]) && (directive_parameter[i] != '_')) || isdigit(directive_parameter[0])) {
 			if(output) {
 				fprintf(output, "ERROR on line %d\n", line_counter);
-				// fprintf(output, "O simbolo possui caractere invalido!\n");
-				fprintf(output, "mensagem!\n");
+				fprintf(output, "O simbolo possui caractere invalido!\n");
 			} else {
 				printf("ERROR on line %d\n", line_counter);
-				// printf("O simbolo possui caractere invalido!\n");
-				printf("mensagem!\n");
+				printf("O simbolo possui caractere invalido!\n");
 			}
 			return false;
 		}
@@ -490,12 +463,10 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 			if(strcmp(probe->name, directive_parameter) == 0) {
 				if(output) {
 					fprintf(output, "ERROR on line %d\n", line_counter);
-					// fprintf(output, "Já existe simbolo com mesmo nome!\n");
-					fprintf(output, "mensagem!\n");
+					fprintf(output, "Já existe simbolo com mesmo nome!\n");
 				} else {
 					printf("ERROR on line %d\n", line_counter);
-					// printf("Já existe simbolo com mesmo nome!\n");
-					printf("mensagem!\n");
+					printf("Já existe simbolo com mesmo nome!\n");
 				}
 				return false;
 			}
@@ -505,12 +476,10 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 			if(strcmp(probe->name, directive_parameter) == 0) {
 				if(output) {
 					fprintf(output, "ERROR on line %d\n", line_counter);
-					// fprintf(output, "Já existe rotulo com mesmo nome!\n");
-					fprintf(output, "mensagem!\n");
+					fprintf(output, "Já existe rotulo com mesmo nome!\n");
 				} else {
 					printf("ERROR on line %d\n", line_counter);
-					// printf("Já existe rotulo com mesmo nome!\n");
-					printf("mensagem!\n");
+					printf("Já existe rotulo com mesmo nome!\n");
 				}
 				return false;
 			}
@@ -526,12 +495,10 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 		if(strlen(parameter_2) != 12) {
 			if(output) {
 				fprintf(output, "ERROR on line %d\n", line_counter);
-				// fprintf(output, "Valor hexadecimal inválido!\n");
-				fprintf(output, "mensagem!\n");
+				fprintf(output, "Valor hexadecimal inválido!\n");
 			} else {
 				printf("ERROR on line %d\n", line_counter);
-				// printf("Valor hexadecimal inválido!\n");
-				printf("mensagem!\n");
+				printf("Valor hexadecimal inválido!\n");
 			}
 			return false;
 		}
@@ -539,12 +506,10 @@ bool apply_set(Alias_list head_node, char *directive_parameter
 	} else {
 		if(output) {
 			fprintf(output, "ERROR on line %d\n", line_counter);
-			// fprintf(output, "Valor inválido!\n");
-			fprintf(output, "mensagem!\n");
+			fprintf(output, "Valor inválido!\n");
 		} else {
 			printf("ERROR on line %d\n", line_counter);
-			// printf("Valor inválido!\n");
-			printf("mensagem!\n");
+			printf("Valor inválido!\n");
 		}
 		return false;
 	}
