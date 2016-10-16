@@ -1,4 +1,5 @@
-.set xablau 0x000000DDFF
-rotulo: .wfill 3 1
-.word xablau
-rotulo2:
+.org 0x0000000100
+var_x:
+.word 00 00 00 00 09
+const1:
+.word 0000000001

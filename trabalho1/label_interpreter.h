@@ -12,7 +12,6 @@
 #include <ctype.h>
 #include "structures.h"
 
-int label_verifier(char *line, char **string_end, char *label_name
-										, Label_list head_node, Alias_list alias_head_node);
+int label_verifier(char *line, char **string_end, char *label_name, Label_list head_node);
 
 #endif /*LABEL_INTERPRETER_DEFINED*/
