@@ -1,5 +1,35 @@
 #include "structures.h"
 
+//Verifica a string, retornando a base (caso seja uma string valida) e -1 caso contrario.
+int find_base(char *string_start) {
+	//Caso seja uma base hexadecimal, verifica se a mesma eh valida.
+	if((*string_start == '0') && (*(string_start+1) == 'x')) {
+		//Avanca os caracteres 0 e x
+		string_start += 2;
+		while(((*string_start) != ' ') && (*string_start) != '\0') {
+			//Retorna -1 caso seja um numero hexadecimal invalido.
+			if(!isxdigit(*string_start)) {
+				return -1;
+			}
+			string_start++;
+		}
+		return 16;
+	} else {
+		if(!isdigit(*string_start) && (*string_start != '-')) {
+			return -1;
+		}
+		string_start++;
+		while(((*string_start) != ' ') && (*string_start) != '\0') {
+			//Retorna -1 caso seja um numero decimal invalido.
+			if(!isdigit(*string_start)) {
+				return -1;
+			}
+			string_start++;
+		}
+		return 10;
+	}
+}
+
 ////////////////////////////Funcoes de rotulos//////////////////////////////////
 //Adiciona um novo rotulo na lista ligada.
 void add_label(char *name, int address, int right, Label_list head_node) {
@@ -128,4 +158,45 @@ void print_aliases(Alias_list head_node) {
 		probe = probe->next;
 	}
 	printf("//////////\n");
+}
+
+//Cria uma matriz com cada linha sendo um mnemonico.
+char** new_mnemonic_list() {
+	char **mnemonic_list = malloc(MNEMONICS_AMOUT * sizeof(char*));
+	for(int i = 0; i < 17; i++) {
+		mnemonic_list[i] = malloc(8 * sizeof(char));
+	}
+
+	//Atribui um mnemonico para cada linha.
+	strcpy(mnemonic_list[0], "LD");
+	strcpy(mnemonic_list[1], "LD-");
+	strcpy(mnemonic_list[2], "LD|");
+	strcpy(mnemonic_list[3], "LDmq");
+	strcpy(mnemonic_list[4], "LDmq_mx");
+	strcpy(mnemonic_list[5], "ST");
+	strcpy(mnemonic_list[6], "JMP");
+	strcpy(mnemonic_list[7], "JUMP+");
+	strcpy(mnemonic_list[8], "ADD");
+	strcpy(mnemonic_list[9], "ADD|");
+	strcpy(mnemonic_list[10], "SUB");
+	strcpy(mnemonic_list[11], "SUB|");
+	strcpy(mnemonic_list[12], "MUL");
+	strcpy(mnemonic_list[13], "DIV");
+	strcpy(mnemonic_list[14], "LSH");
+	strcpy(mnemonic_list[15], "RSH");
+	strcpy(mnemonic_list[16], "STaddr");
+
+	return mnemonic_list;
+}
+
+//Compara o mnemonico dado com a lista, retornando um valor positivo caso o mnemonico seja valido.
+int find_mnemonic(char *mnemonic, char **mnemonic_list) {
+	for(int i = 0; i < MNEMONICS_AMOUT; i++) {
+		if(strcmp(mnemonic, mnemonic_list[i]) == 0) {
+			printf("TEM INSTRUCAO %d\n", i);
+			return i;
+		}
+	}
+
+	return -1;
 }

@@ -1,5 +1,2 @@
 .org 0x0000000100
-var_x:
-.word 00 00 00 00 09
-const1:
-.word 0000000001
+var_x: ADD "1033"

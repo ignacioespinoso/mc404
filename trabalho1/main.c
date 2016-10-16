@@ -5,6 +5,7 @@
 
 #include "label_interpreter.h"
 #include "directive_interpreter.h"
+#include "instruction_interpreter.h"
 #include "ias_map.h"
 
 
@@ -64,11 +65,11 @@ int main(int argc, char *argv[]) {
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
 					char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-					int has_directive = directive_verifier(&string_end, directive_parameter);
+					int has_directive = directive_verifier(&string_end, directive_parameter, line_counter);
 
 //////////Atua para a diretiva .org
 					if(has_directive == 1) {
-						if(apply_org(&address, directive_parameter)) {
+						if(apply_org(&address, directive_parameter, line_counter)) {
 							right = -1;
 						} else {
 							printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
@@ -81,14 +82,14 @@ int main(int argc, char *argv[]) {
 							dont_print = true;
 							printf("ERROR on line %d\nNao é possivel usar .word do lado direito!\n", line_counter);
 						} else if (!apply_word(&address, directive_parameter, memory_map
-																		, label_head_node, alias_head_node, NULL)){
+																		, label_head_node, alias_head_node, NULL, line_counter)){
 							printf("ERROR on line %d\nErro ao aplicar .word!\n", line_counter);
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
-						if(apply_align(&address, directive_parameter)) {
+						if(apply_align(&address, directive_parameter, line_counter)) {
 							for(int i = 8; i < 13; i++) {
 								memory_map[address][i] = '0';
 							}
@@ -103,13 +104,13 @@ int main(int argc, char *argv[]) {
 						if(right == 1) {
 							dont_print = true;
 						} else if (!apply_wfill(&address, directive_parameter, memory_map,
-							 				&string_end, label_head_node, alias_head_node, NULL)){
+							 				&string_end, label_head_node, alias_head_node, NULL, line_counter)){
 							dont_print = true;
 						}
 						printf("o endereco final eh %d\n", address);
 //////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
-						if(!apply_set(NULL, directive_parameter, &string_end, NULL)) {
+						if(!apply_set(NULL, directive_parameter, &string_end, NULL, line_counter)) {
 							dont_print = true;
 						}
 					} else if(has_directive == -1) {
@@ -159,6 +160,7 @@ int main(int argc, char *argv[]) {
 																				, NULL);
 
 				if(has_label == 1) {
+					printf("yaaaaaaaaaaaaaaaaay\n");
 					//Percorre os espacos apos o rotulo.
 					string_end++;
 					while(((*string_end) == ' ') && ((*string_end) != '\n') && ((*string_end) != '\0')) {
@@ -172,11 +174,11 @@ int main(int argc, char *argv[]) {
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
 					char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-					int has_directive = directive_verifier(&string_end, directive_parameter);
+					int has_directive = directive_verifier(&string_end, directive_parameter, line_counter);
 
 //////////Atua para a diretiva .org
 					if(has_directive == 1) {
-						if(apply_org(&address, directive_parameter)) {
+						if(apply_org(&address, directive_parameter, line_counter)) {
 							right = -1;
 						} else {
 							dont_print = true;
@@ -187,13 +189,13 @@ int main(int argc, char *argv[]) {
 						if(right == 1) {
 							dont_print = true;
 						} else if (!apply_word(&address, directive_parameter, memory_map
-																		, label_head_node, alias_head_node, be_printed)){
+																		, label_head_node, alias_head_node, be_printed, line_counter)){
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
-						if(apply_align(&address, directive_parameter)) {
+						if(apply_align(&address, directive_parameter, line_counter)) {
 							for(int i = 8; i < 13; i++) {
 								memory_map[address][i] = '0';
 							}
@@ -209,14 +211,14 @@ int main(int argc, char *argv[]) {
 
 							dont_print = true;
 						} else if (!apply_wfill(&address, directive_parameter, memory_map,
-							 				&string_end, label_head_node, alias_head_node, be_printed)){
+							 				&string_end, label_head_node, alias_head_node, be_printed, line_counter)){
 
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
-						if(!apply_set(alias_head_node, directive_parameter, &string_end, label_head_node)) {
+						if(!apply_set(alias_head_node, directive_parameter, &string_end, label_head_node, line_counter)) {
 							dont_print = true;
 						}
 					} else if(has_directive == -1) {
@@ -224,6 +226,11 @@ int main(int argc, char *argv[]) {
 						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
 					} else {
 //////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
+						bool instruction = instruction_applier(&string_end, label_head_node
+																		, &address, memory_map, &right, line_counter);
+						if(instruction == false) {
+							dont_print = true;
+						}
 						printf("Sem diretiva na linha %d\n", line_counter);
 					}
 				}
@@ -238,7 +245,7 @@ int main(int argc, char *argv[]) {
 						string_end++;
 					}
 				} else if (((*string_end) != '\n') && ((*string_end) != '\0')) {
-					printf("ERROR on line\n");
+					printf("ERROR on line %d\n", line_counter);
 					printf("Caractere inválido!\n");
 					dont_print = true; //Caracteres invalidos inseridos!
 				}

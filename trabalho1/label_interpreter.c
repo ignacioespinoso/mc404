@@ -22,7 +22,6 @@ int label_verifier(char *line, char **string_end, char *label_name
 		char *verifier = string_start;
 		while(verifier != (*string_end)) {
 			if(!isalnum(*verifier) && (*verifier != '_')) {
-				printf("1\n");
 				label_error = true;
 			}
 			verifier++;
@@ -30,14 +29,12 @@ int label_verifier(char *line, char **string_end, char *label_name
 
 		//Verifica se o primeiro caractere eh um numero.
 		if(isdigit(*string_start)) {
-			printf("2\n");
 			label_error = true;
 		}
 
 		//Verifica se logo apos os dois pontos (":") ha algum caractere.
 		if((*((*string_end) + 1) != ' ') && (*((*string_end) + 1) != '\n') && (*((*string_end) + 1) != '\t') && (*((*string_end) + 1) != '\n')) {
 			label_error = true;
-			printf("3\n");
 		}
 	}
 	// Verifica se ha um rotulo com mesmo nome na lista.

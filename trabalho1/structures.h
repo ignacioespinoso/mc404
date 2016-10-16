@@ -4,6 +4,7 @@
 #define MAX_SIZE 4097
 #define MAX_MAP_SIZE 1024
 #define MAX_LABEL_SIZE 64
+#define MNEMONICS_AMOUT 17
 
 #include <stdio.h>
 #include <string.h>
@@ -28,6 +29,9 @@ typedef struct Alias {
 	struct Alias *next;
 } Alias, *Alias_list;
 
+//Verifica a string, retornando a base (caso seja uma string valida) e -1 caso contrario.
+int find_base(char *string_start);
+
 ////////////////////////////Funcoes de rotulos//////////////////////////////////
 void add_label(char *name, int address, int right, Label_list head_node);
 
@@ -46,4 +50,10 @@ Alias* find_alias(Alias_list head_node, char *name);
 
 void print_aliases(Alias_list head_node);
 
+/////////////////////Funcoes dos mnemonicos/////////////////////////////////////
+//Cria uma nova lista de mnemonicos
+char** new_mnemonic_list();
+
+//Compara o mnemonico dado com a lista, retornando um valor positivo caso o mnemonico seja valido.
+int find_mnemonic(char *mnemonic, char **mnemonic_list);
 #endif /*STRUCTURES_DEFINED*/
