@@ -8,10 +8,13 @@
 #include "instruction_interpreter.h"
 #include "ias_map.h"
 
-
 int main(int argc, char *argv[]) {
 	//Obtem o nome do arquivo de entrada
 	FILE *file = fopen(argv[1], "r");
+	FILE *output = NULL;
+	if(argv[2]) {
+		output = fopen(argv[2], "w");
+	}
 	char line[MAX_SIZE];
 
 	if(file) {
@@ -26,7 +29,6 @@ int main(int argc, char *argv[]) {
 
 		//Inicializa o mapa de memoria e seus enderecos a serem impressos.
 		char **memory_map = new_memory_map();
-		bool *be_printed = calloc(MAX_MAP_SIZE, sizeof(bool));
 
 //////////Salva os rotulos na primeira leitura do arquivo///////////////////////
 //Nenhuma escrita eh feita no mapa de memoria nesta etapa.
@@ -44,7 +46,7 @@ int main(int argc, char *argv[]) {
 			//Atua caso haja um rotulo invalido.
 			} else if(has_label == -1){
 				dont_print = true;
-				printf("ERROR on line %d\nRotulo invalido!\n", line_counter);
+				// printf("ERROR on line %d\nRotulo invalido!\n", line_counter);
 			}
 			if(!dont_print) {
 				char *label_name = malloc((MAX_LABEL_SIZE+1) * sizeof(char));
@@ -60,7 +62,6 @@ int main(int argc, char *argv[]) {
 				//Atua caso haja um rotulo invalido.
 				} else if(has_label == -1){
 					dont_print = true;
-					printf("ERROR on line %d\nRotulo invalido!\n", line_counter);
 				}
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
@@ -69,10 +70,9 @@ int main(int argc, char *argv[]) {
 
 //////////Atua para a diretiva .org
 					if(has_directive == 1) {
-						if(apply_org(&address, directive_parameter, line_counter)) {
+						if(apply_org(&address, directive_parameter, line_counter, output)) {
 							right = -1;
 						} else {
-							printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
 							dont_print = true;
 						}
 
@@ -80,22 +80,19 @@ int main(int argc, char *argv[]) {
 					} else if(has_directive == 2) {
 						if(right == 1) {
 							dont_print = true;
-							printf("ERROR on line %d\nNao é possivel usar .word do lado direito!\n", line_counter);
 						} else if (!apply_word(&address, directive_parameter, memory_map
-																		, label_head_node, alias_head_node, NULL, line_counter)){
-							printf("ERROR on line %d\nErro ao aplicar .word!\n", line_counter);
+																		, label_head_node, alias_head_node, NULL, line_counter, output)){
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
-						if(apply_align(&address, directive_parameter, line_counter)) {
+						if(apply_align(&address, directive_parameter, line_counter, output)) {
 							for(int i = 8; i < 13; i++) {
 								memory_map[address][i] = '0';
 							}
 							right = -1;
 						} else {
-							printf("ERROR on line %d\nErro ao aplicar .align!\n", line_counter);
 							dont_print = true;
 						}
 
@@ -104,22 +101,21 @@ int main(int argc, char *argv[]) {
 						if(right == 1) {
 							dont_print = true;
 						} else if (!apply_wfill(&address, directive_parameter, memory_map,
-							 				&string_end, label_head_node, alias_head_node, NULL, line_counter)){
+							 				&string_end, label_head_node, alias_head_node, NULL, line_counter, output)){
 							dont_print = true;
 						}
-						printf("o endereco final eh %d\n", address);
 //////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
-						if(!apply_set(NULL, directive_parameter, &string_end, NULL, line_counter)) {
+						if(!apply_set(NULL, directive_parameter, &string_end, NULL, line_counter, output)) {
 							dont_print = true;
 						}
 					} else if(has_directive == -1) {
 						dont_print = true;
-						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
+						// printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
 					} else {
 ////////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
 						int instruction = instruction_applier(&string_end, label_head_node
-												, &address, memory_map, &right, line_counter, NULL);
+												, &address, memory_map, &right, line_counter, NULL, output);
 						if(instruction == -1) {
 							dont_print = true;
 						}
@@ -139,7 +135,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-		print_labels(label_head_node);
+	//	print_labels(label_head_node);
 		fclose(file);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +143,8 @@ int main(int argc, char *argv[]) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////Inicia a segunda leitura do arquivo/////////////////////////////////////////////////////////////////////////////////////////////////////////
-		printf("=======================INICIANDO SEGUNDA LEITURA\n" );
+	//	printf("=======================INICIANDO SEGUNDA LEITURA\n" );
+		bool *be_printed = calloc(MAX_MAP_SIZE, sizeof(bool));
 		line_counter = 1;
 		address = 0;
 		right = -1;
@@ -173,7 +170,16 @@ int main(int argc, char *argv[]) {
 				//Atua caso haja um rotulo invalido.
 				} else if(has_label == -1){
 					dont_print = true;
-					printf("ERROR on line %d\nRotulo invalido!\n", line_counter);
+					if(argv[2]) {
+						fprintf(output, "ERROR on line %d\n", line_counter);
+						// fprintf(output, "Rótulo inválido!\n");
+						fprintf(output, "mensagem!\n");
+					} else {
+						printf("ERROR on line %d\n", line_counter);
+						// printf("Rótulo inválido!\n");
+						printf("mensagem!\n");
+					}
+
 				}
 ///////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
 				if(!dont_print) {
@@ -182,7 +188,7 @@ int main(int argc, char *argv[]) {
 
 //////////Atua para a diretiva .org
 					if(has_directive == 1) {
-						if(apply_org(&address, directive_parameter, line_counter)) {
+						if(apply_org(&address, directive_parameter, line_counter, output)) {
 							right = -1;
 						} else {
 							dont_print = true;
@@ -193,13 +199,13 @@ int main(int argc, char *argv[]) {
 						if(right == 1) {
 							dont_print = true;
 						} else if (!apply_word(&address, directive_parameter, memory_map
-																		, label_head_node, alias_head_node, be_printed, line_counter)){
+																		, label_head_node, alias_head_node, be_printed, line_counter, output)){
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .align
 					} else if(has_directive == 3) {
-						if(apply_align(&address, directive_parameter, line_counter)) {
+						if(apply_align(&address, directive_parameter, line_counter, output)) {
 							for(int i = 8; i < 13; i++) {
 								memory_map[address][i] = '0';
 							}
@@ -214,23 +220,32 @@ int main(int argc, char *argv[]) {
 						if(right == 1) {
 							dont_print = true;
 						} else if (!apply_wfill(&address, directive_parameter, memory_map,
-											&string_end, label_head_node, alias_head_node, be_printed, line_counter)){
+											&string_end, label_head_node, alias_head_node, be_printed, line_counter, output)){
 
 							dont_print = true;
 						}
 
 //////////Atua para a diretiva .set
 					} else if(has_directive == 5) {
-						if(!apply_set(alias_head_node, directive_parameter, &string_end, label_head_node, line_counter)) {
+						if(!apply_set(alias_head_node, directive_parameter, &string_end, label_head_node, line_counter, output)) {
 							dont_print = true;
 						}
 					} else if(has_directive == -1) {
 						dont_print = true;
-						printf("ERROR on line %d\nDiretiva invalida!\n", line_counter);
+						if(argv[2]) {
+							fprintf(output, "ERROR on line %d\n", line_counter);
+						//	fprintf(output, "Diretiva invalida!\n");
+							fprintf(output, "mensagem!\n");
+						} else {
+							printf("ERROR on line %d\n", line_counter);
+							//printf("Diretiva invalida!\n");
+							printf("mensagem!\n");
+						}
+
 					} else {
 //////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
 						int instruction = instruction_applier(&string_end, label_head_node
-																		, &address, memory_map, &right, line_counter, be_printed);
+																		, &address, memory_map, &right, line_counter, be_printed, output);
 						if(instruction == -1) {
 							dont_print = true;
 						}
@@ -247,23 +262,36 @@ int main(int argc, char *argv[]) {
 						string_end++;
 					}
 				} else if (((*string_end) != '\n') && ((*string_end) != '\0')) {
-					printf("33string_end =%c=\n", *string_end);
-					printf("ERROR on line %d\n", line_counter);
-					printf("Caractere inválido!\n");
+					if(argv[2]) {
+						fprintf(output, "ERROR on line %d\n", line_counter);
+						// fprintf(output, "Caractere inválido!\n");
+						fprintf(output, "mensagem!\n");
+					} else {
+						printf("ERROR on line %d\n", line_counter);
+						// printf("Caractere inválido!\n");
+						printf("mensagem!\n");
+					}
+
+
 					dont_print = true; //Caracteres invalidos inseridos!
 				}
 			}
 			line_counter++;
 		}
-		print_labels(label_head_node);
-		print_aliases(alias_head_node);
-		if(dont_print) {
-			printf("Nao vai imprimir mapa!\n");
-		} else {
+	//	print_labels(label_head_node);
+	//	print_aliases(alias_head_node);
+
+		//Imprime em um novo arquivo caso haja parametro.
+	if(argv[2] && !dont_print){
+		print_map_file(memory_map, be_printed, MAX_MAP_SIZE, output);
+	//Imprime no terminal caso contrario.
+	} else if (!dont_print){
 			print_map(memory_map, be_printed, MAX_MAP_SIZE);
 		}
 		//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.
 		fclose(file);
 	}
+
+
 	return 0;
 }

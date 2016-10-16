@@ -40,28 +40,18 @@ void print_map (char **map, bool *be_printed, int map_size) {
 	}
 }
 
-//Escreve um valor na memoria de acordo com os argumentos. Para right = 0
-// , faz uso de todos os argumentos. Retorna 0 para endereco invalido.
-// int write_data(int **map, int address, int right, int opcode1, int opcode2
-// 				, int op_address1, int op_address2, bool *be_printed) {
-// 	if((address < MAX_MAP_SIZE) && (address >= 0)) {
-// 		if(right == 1) {
-// 			map[address][3] = opcode2;
-// 			map[address][4] = op_address2;
-// 		} else if(right == -1) {
-// 			map[address][1] = opcode1;
-// 			map[address][2] = op_address1;
-// 		} else {
-// 			map[address][1] = opcode1;
-// 			map[address][2] = op_address1;
-// 			map[address][3] = opcode2;
-// 			map[address][4] = op_address2;
-// 		}
-// 		be_printed[address] = true;
-// 		return 1;
-// 	} else {
-// 		//Endereco invalido!
-// 		return 0;
-// 	}
-//
-// }
+void print_map_file (char **map, bool *be_printed, int map_size, FILE *file) {
+	for(int i = 0;	i < MAX_MAP_SIZE; i++) {
+		//Caso o endereco atual foi escrito, eh impressa a palavra de memoria.
+		if(be_printed[i]) {
+			fprintf(file, "%.3X ", i);
+			for(int j = 0; j < 10; j++) {
+				fprintf(file, "%c", map[i][j]);
+				if((j == 1) ||(j == 4) ||(j == 6)) {
+					fprintf(file, " ");
+				}
+			}
+			fprintf(file, "\n");
+		}
+	}
+}

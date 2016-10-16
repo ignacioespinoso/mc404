@@ -20,10 +20,6 @@ void free_memory_map(char **map);
 //Imprime as palavras de memoria desejadas
 void print_map (char **map, bool *be_printed, int map_size);
 
-//Escreve um valor na memoria de acordo com os argumentos. Para right = 0
-// , faz uso de todos os argumentos. Retorna 0 para endereco invalido.
-// int write_data(char **map, int address, int right, int opcode1, int opcode2
-// 				, int op_address1, int op_address2, bool *be_printed);
-//
+void print_map_file (char **map, bool *be_printed, int map_size, FILE *file);
 
 #endif /*IAS_MAP_DEFINED*/

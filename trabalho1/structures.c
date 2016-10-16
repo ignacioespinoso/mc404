@@ -193,7 +193,6 @@ char** new_mnemonic_list() {
 int find_mnemonic(char *mnemonic, char **mnemonic_list) {
 	for(int i = 0; i < MNEMONICS_AMOUT; i++) {
 		if(strcmp(mnemonic, mnemonic_list[i]) == 0) {
-			printf("TEM INSTRUCAO %d\n", i);
 			return i;
 		}
 	}
@@ -202,7 +201,7 @@ int find_mnemonic(char *mnemonic, char **mnemonic_list) {
 }
 
 char *find_op_code(int mnemonic_type, int right) {
-	char *opcode = malloc(2 * sizeof(char));
+	char *opcode = malloc(3 * sizeof(char));
 	if(mnemonic_type == 0) {
 		strcpy(opcode, "01");
 	} else if (mnemonic_type == 1) {
