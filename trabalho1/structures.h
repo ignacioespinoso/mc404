@@ -37,6 +37,8 @@ void add_label(char *name, int address, int right, Label_list head_node);
 
 Label_list new_label_list();
 
+void free_label_list(Label_list head_node);
+
 Label* find_label(Label_list head_node, char *name);
 
 void print_labels(Label_list head_node);
@@ -46,6 +48,8 @@ void add_alias(char *name, unsigned int value, Alias_list head_node);
 
 Alias_list new_alias_list();
 
+void free_alias_list(Alias_list head_node);
+
 Alias* find_alias(Alias_list head_node, char *name);
 
 void print_aliases(Alias_list head_node);
@@ -53,6 +57,8 @@ void print_aliases(Alias_list head_node);
 /////////////////////Funcoes dos mnemonicos/////////////////////////////////////
 //Cria uma nova lista de mnemonicos
 char** new_mnemonic_list();
+
+void free_mnemonic_list(char **mnemonic_list);
 
 //Compara o mnemonico dado com a lista, retornando um valor positivo caso o mnemonico seja valido.
 int find_mnemonic(char *mnemonic, char **mnemonic_list);

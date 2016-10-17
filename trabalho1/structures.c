@@ -260,3 +260,30 @@ char *find_op_code(int mnemonic_type, int right) {
 
 	return opcode;
 }
+void free_label_list(Label_list head_node) {
+	Label *probe = head_node->next;
+	while(probe) {
+		head_node->next = probe->next;
+		free(probe);
+		probe = head_node->next;
+	}
+
+	free(head_node);
+}
+void free_alias_list(Alias_list head_node) {
+	Alias *probe = head_node->next;
+	while(probe) {
+		head_node->next = probe->next;
+		free(probe);
+		probe = head_node->next;
+	}
+
+	free(head_node);
+}
+
+void free_mnemonic_list(char **mnemonic_list) {
+	for(int i = 0; i < 17; i++) {
+		free(mnemonic_list[i]);
+	}
+	free(mnemonic_list);
+}

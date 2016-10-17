@@ -127,7 +127,18 @@ bool apply_org(int *address, char *directive_parameter, int line_counter, FILE *
 	int value;
 
 	if(base == 10) {
-		value = strtol(directive_parameter, &string_start, 10);
+	value = strtol(directive_parameter, &string_start, 10);
+
+	if(value > 1023) {
+		if(output) {
+			fprintf(output, "ERROR on line %d\n", line_counter);
+			fprintf(output, "Valor extrapola mapa de memória!\n");
+		} else {
+			printf("ERROR on line %d\n", line_counter);
+			printf("Valor extrapola mapa de memória!\n");
+		}
+		return false;
+	}
 	} else if(base == 16) {
 		if(strlen(directive_parameter) != 12) {
 			if(output) {

@@ -55,73 +55,83 @@ int main(int argc, char *argv[]) {
 				return 0;
 			}
 //////////////////Identifica se a linha possui uma diretiva////////////////////////////////////
-				char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
-				int has_directive = directive_verifier(&string_end, directive_parameter, line_counter);
+			char *directive_parameter = malloc(MAX_SIZE * sizeof(char));
+			int has_directive = directive_verifier(&string_end, directive_parameter, line_counter);
 
 //////////Atua para a diretiva .org
-				if(has_directive == 1) {
-					if(apply_org(&address, directive_parameter, line_counter, output)) {
-						right = -1;
-					} else {
-						dont_print = true;
-					}
-//////////Atua para a diretiva .word
-				} else if(has_directive == 2) {
-					if(right == 1) {
-						dont_print = true;
-					} else if (!apply_word(&address, directive_parameter, memory_map
-																	, label_head_node, alias_head_node, NULL, line_counter, output)){
-						dont_print = true;
-					}
-//////////Atua para a diretiva .align
-				} else if(has_directive == 3) {
-					if(apply_align(&address, directive_parameter, line_counter, output)) {
-						right = -1;
-						if(address > 1023) {
-							if(argv[2]) {
-								fprintf(output, "ERROR on line %d\n", line_counter);
-								fprintf(output, "Align extrapola limite do mapa!\n");
-							} else {
-								printf("ERROR on line %d\n", line_counter);
-								printf("Align extrapola limite do mapa!\n");
-							}
+			if(has_directive == 1) {
+				if(apply_org(&address, directive_parameter, line_counter, output)) {
+					right = -1;
+				} else {
+					dont_print = true;
+				}
+/////////Atua para a diretiva .word
+			} else if(has_directive == 2) {
+				if(right == 1) {
+					dont_print = true;
+				} else if (!apply_word(&address, directive_parameter, memory_map
+																, label_head_node, alias_head_node, NULL, line_counter, output)){
+					dont_print = true;
+				}
+/////////Atua para a diretiva .align
+			} else if(has_directive == 3) {
+				if(apply_align(&address, directive_parameter, line_counter, output)) {
+					right = -1;
+					if(address > 1023) {
+						if(argv[2]) {
+							fprintf(output, "ERROR on line %d\n", line_counter);
+							fprintf(output, "Align extrapola limite do mapa!\n");
+						} else {
+							printf("ERROR on line %d\n", line_counter);
+							printf("Align extrapola limite do mapa!\n");
 						}
-					} else {
-						dont_print = true;
-					}
-//////////Atua para a diretiva .wfill
-				} else if(has_directive == 4) {
-					if(right == 1) {
-						dont_print = true;
-					} else if (!apply_wfill(&address, directive_parameter, memory_map,
-						 				&string_end, label_head_node, alias_head_node, NULL, line_counter, output)){
-						dont_print = true;
-					}
-/////////Atua para a diretiva .set
-				} else if(has_directive == 5) {
-					if(!apply_set(NULL, directive_parameter, &string_end, NULL, line_counter, output)) {
-						return 0;
 					}
 				} else {
-///////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
-					int instruction = instruction_applier(&string_end, label_head_node
-											, &address, memory_map, &right, line_counter, NULL, output);
-					if(instruction == -1) {
-						return 0;
-					}
+					dont_print = true;
 				}
-				//////////////////Identifica se a linha possui um comentario////////////////////////
-				while(((*string_end) != ' ') && ((*string_end) != '\n') && ((*string_end) != '\0') && (*string_end != '#')) {
+/////////Atua para a diretiva .wfill
+			} else if(has_directive == 4) {
+				if(right == 1) {
+					dont_print = true;
+				} else if (!apply_wfill(&address, directive_parameter, memory_map,
+					 				&string_end, label_head_node, alias_head_node, NULL, line_counter, output)){
+					dont_print = true;
+				}
+/////////Atua para a diretiva .set
+			} else if(has_directive == 5) {
+				if(!apply_set(NULL, directive_parameter, &string_end, NULL, line_counter, output)) {
+					return 0;
+				}
+			} else {
+//////////Caso nao possua diretiva, verifica se possui uma instrucao////////////////////////
+				int instruction = instruction_applier(&string_end, label_head_node
+										, &address, memory_map, &right, line_counter, NULL, output);
+				if(instruction == -1) {
+					return 0;
+				}
+			}
+
+			//////////////////Identifica se a linha possui um comentario////////////////////////
+			while(((*string_end) != ' ') && ((*string_end) != '\n') && ((*string_end) != '\0') && (*string_end != '#')) {
+				string_end++;
+			}
+			if(*string_end == '#') {
+				while(((*string_end) != '\n') && ((*string_end) != '\0')) {
 					string_end++;
 				}
-				if(*string_end == '#') {
-					while(((*string_end) != '\n') && ((*string_end) != '\0')) {
-						string_end++;
-					}
-				} else if (((*string_end) != '\n') && ((*string_end) != '\0')) {
-				}
-				line_counter++;
+			}
+			line_counter++;
 
+			if(address > 1023) {
+				if(argv[2]) {
+					fprintf(output, "ERROR on line %d\n", line_counter);
+					fprintf(output, "Endereço de escrita inválido!\n");
+				} else {
+					printf("ERROR on line %d\n", line_counter);
+					fprintf(output, "Endereço de escrita inválido!\n");
+				}
+				return 0;
+			}
 		}
 	//	print_labels(label_head_node);
 		fclose(file);
@@ -269,15 +279,30 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			line_counter++;
+			if(address > 1023) {
+				if(argv[2]) {
+					fprintf(output, "ERROR on line %d\n", line_counter);
+					fprintf(output, "Endereço de escrita inválido!\n");
+				} else {
+					printf("ERROR on line %d\n", line_counter);
+					fprintf(output, "Endereço de escrita inválido!\n");
+				}
+			}
 		}
-	//print_labels(label_head_node);
-	//Imprime em um novo arquivo caso haja parametro.
-	if(argv[2] && !dont_print){
-		print_map_file(memory_map, be_printed, MAX_MAP_SIZE, output);
-	//Imprime no terminal caso contrario.
-	} else if (!dont_print){
+
+		//print_labels(label_head_node);
+		//Imprime em um novo arquivo caso haja parametro.
+		if(argv[2] && !dont_print){
+			print_map_file(memory_map, be_printed, MAX_MAP_SIZE, output);
+		//Imprime no terminal caso contrario.
+		} else if (!dont_print){
 			print_map(memory_map, be_printed, MAX_MAP_SIZE);
 		}
+
+		free(be_printed);
+		free_memory_map(memory_map);
+		free_alias_list(alias_head_node);
+		free_label_list(label_head_node);
 		//Fecha o arquivo de entrada caso o mesmo tenha sido aberto.
 		fclose(file);
 	}

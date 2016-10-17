@@ -41,6 +41,7 @@ int instruction_applier(char **string_end, Label_list label_head_node
 	}
 	name[i] = '\0';
 	mnemonic_type = find_mnemonic(name, mnemonic_list);
+	free_mnemonic_list(mnemonic_list);
 	free(name);
 	if(mnemonic_type == -1) {
 		printf("ERROR on line %d\n", line_counter);
@@ -119,6 +120,7 @@ int instruction_applier(char **string_end, Label_list label_head_node
 						position = memory_map[*address] + address_position;
 						sprintf((memory_map[*address] + address_position), "%.3X", value);
 						be_printed[*address] = true;
+						free(instruction);
 					}
 
 				} else {
@@ -156,8 +158,10 @@ int instruction_applier(char **string_end, Label_list label_head_node
 				if(be_printed) {
 					be_printed[*address] = true;
 				}
+				free(instruction);
 			}
 		}
+		free(parameter);
 	//Não necessitando de campo endereço, apenas escreve o op_code no mapa de memoria
 	//, preenchendo os demais espaços com '0'.
 	} else if ((mnemonic_type != -1)){
@@ -172,6 +176,7 @@ int instruction_applier(char **string_end, Label_list label_head_node
 			}
 			be_printed[*address] = true;
 		}
+		free(instruction);
 	} else {
 		return 0;
 	}
