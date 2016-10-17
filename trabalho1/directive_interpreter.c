@@ -93,7 +93,6 @@ bool is_word(char *name) {
 	} else {
 		return false;
 	}
-
 }
 
 bool is_align(char *name) {
@@ -230,11 +229,15 @@ bool apply_word(int *address, char *directive_parameter, char **memory_map
 
 }
 
-bool apply_align(int *address, char *directive_parameter, int line_counter, int *right, FILE *output) {
+bool apply_align(int *address, char *directive_parameter, int line_counter, FILE *output) {
 	char *string_start = directive_parameter;
 	if(find_base(string_start) == 10) {
 		int value = strtol(directive_parameter, &string_start, 10);
 		while((*address) % value != 0) {
+			(*address)++;
+		}
+
+		if(value == 1) {
 			(*address)++;
 		}
 		return true;

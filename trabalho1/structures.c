@@ -254,7 +254,6 @@ char *find_op_code(int mnemonic_type, int right) {
 		} else {
 			return NULL; //Right possui valor invalido
 		}
-		strcpy(opcode, "STaddr");
 	} else if (mnemonic_type == -1){
 		return NULL; //Tipo de mnemonico invalido.
 	}

@@ -47,8 +47,6 @@ int instruction_applier(char **string_end, Label_list label_head_node
 		printf("Mnemonico inválido!\n");
 		return -1;
 	}
-
-
 	//Realiza o comando caso o mesmo precise do campo endereco...
 	if((mnemonic_type != 3) && (mnemonic_type != 14) && (mnemonic_type != 15) && (mnemonic_type != -1)) {
 		//Parameter armazena o campo endereco da instrucao.
@@ -112,14 +110,16 @@ int instruction_applier(char **string_end, Label_list label_head_node
 						printf("Valor inválido!\n");
 						return -1;
 					}
-					char *instruction = find_op_code(mnemonic_type, token->right);
-					//Escreve o campo opcode da instrução
-					char *position = memory_map[*address] + opcode_position;
-					strcpy(position, instruction);
-					//Escreve o campo endereco da instrução
-					position = memory_map[*address] + address_position;
-					sprintf((memory_map[*address] + address_position), "%.3X", value);
-					be_printed[*address] = true;
+					if(be_printed) {
+						char *instruction = find_op_code(mnemonic_type, token->right);
+						//Escreve o campo opcode da instrução
+						char *position = memory_map[*address] + opcode_position;
+						strcpy(position, instruction);
+						//Escreve o campo endereco da instrução
+						position = memory_map[*address] + address_position;
+						sprintf((memory_map[*address] + address_position), "%.3X", value);
+						be_printed[*address] = true;
+					}
 
 				} else {
 					printf("ERROR on line %d\n", line_counter);
@@ -127,16 +127,18 @@ int instruction_applier(char **string_end, Label_list label_head_node
 					return -1; //O parametro nao eh um nem um numero nem um rotulo.
 				}
 			} else {
-				char *instruction = find_op_code(mnemonic_type, -1);
-				//Escreve o campo opcode da instrução
-				strcpy((memory_map[*address] + opcode_position), instruction);
 				int value = strtol(parameter, &int_end, base);
+				char *instruction = find_op_code(mnemonic_type, -1);
 				if(value > 4096) {
 					printf("ERROR on line %d\n", line_counter);
 					printf("Valor inválido!\n");
 					return -1;
 				}
-				if(base == 10) {
+				if(be_printed) {
+					//Escreve o campo opcode da instrução
+					strcpy((memory_map[*address] + opcode_position), instruction);
+				}
+				if((base == 10) && be_printed) {
 					//Escreve o campo endereco da instrução
 					sprintf((memory_map[*address] + address_position), "%.3X", value);
 				} else {
@@ -146,32 +148,40 @@ int instruction_applier(char **string_end, Label_list label_head_node
 						printf("Valor hexadecimal invalido!\n");
 						return -1;
 					}
-					//Sendo um valor hexadecimal válido, o escreve no campo endereco da instrução
-					sprintf((memory_map[*address] + address_position), "%.3X", value);
+					if(be_printed) {
+						//Sendo um valor hexadecimal válido, o escreve no campo endereco da instrução
+						sprintf((memory_map[*address] + address_position), "%.3X", value);
+					}
 				}
-				be_printed[*address] = true;
+				if(be_printed) {
+					be_printed[*address] = true;
+				}
 			}
 		}
 	//Não necessitando de campo endereço, apenas escreve o op_code no mapa de memoria
-	//, Preenchendo os demais espaços com '0'.
-} else if ((mnemonic_type != -1) && be_printed){
+	//, preenchendo os demais espaços com '0'.
+	} else if ((mnemonic_type != -1)){
 		char *instruction = find_op_code(mnemonic_type, -1);
 		//Escreve o campo opcode da instrução
 		int field = *address;
-		char *position = memory_map[field] + opcode_position;
-		strcpy(position, instruction);
-		for(int i = 0; i < 3; i++) {
-			memory_map[*address][address_position + i] = '0';
+		if(be_printed) {
+			char *position = memory_map[field] + opcode_position;
+			strcpy(position, instruction);
+			for(int i = 0; i < 3; i++) {
+				memory_map[*address][address_position + i] = '0';
+			}
+			be_printed[*address] = true;
 		}
-		be_printed[*address] = true; //Aqui rola seg_fault
 	} else {
 		return 0;
 	}
-	if((mnemonic_type != -1) && be_printed) {
+	if((mnemonic_type != -1)) {
 		//Em caso de escrita bem sucedida na esquerda, atualiza os valores na direita
 		if(*right == -1) {
-			for(int i = 5; i < 10; i++) {
-				memory_map[*address][i] = '0';
+			if(be_printed) {
+				for(int i = 5; i < 10; i++) {
+					memory_map[*address][i] = '0';
+				}
 			}
 			//Atualiza o local de escrita.
 			*right = 1;
